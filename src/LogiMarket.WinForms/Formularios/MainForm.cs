@@ -81,6 +81,14 @@ public sealed class MainForm : Form
         Agregar("Clientes", new ClientesView(_ui));
         Agregar("Carrito / borrador", new CarritoView(_ui));
         Agregar("Pedidos e historial", new PedidosView(_ui));
+        Agregar("Cobro", new CobroView(_ui));
+        Agregar("Despacho", new DespachoView(_ui));
+        Agregar("Devoluciones", new DevolucionesView(_ui));
+        Agregar("Inventario", new InventarioView(_ui));
+        Agregar("Reportes", new ReportesView(_ui));
+        Agregar("Auditoría y métricas", new AuditoriaView(_ui));
+        if (_ui.Puede(Permiso.AdministrarDemostracion))
+            Agregar("Demostración", new DemostracionView(_ui));
     }
 
     private void Agregar(string texto, VistaBase vista)
