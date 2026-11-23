@@ -32,8 +32,10 @@ public interface IMediadorVistas
     IReadOnlyList<string> UltimasVistasRefrescadas { get; }
 }
 
+/// 
 /// Mediador concreto con una tabla de rutas evento → vistas a refrescar. El formulario principal
 /// (WinForms) lo especializa con sus nombres de vista; las pruebas lo usan con vistas dobles.
+/// 
 public class MediadorVistas : IMediadorVistas
 {
     private readonly Dictionary<string, IVistaColaboradora> _vistas = new(StringComparer.OrdinalIgnoreCase);
@@ -51,16 +53,25 @@ public class MediadorVistas : IMediadorVistas
     public async Task NotificarAsync(IVistaColaboradora? emisor, EventoVista evento)
     {
         var refrescadas = new List<string>();
+        var fallidas = new List<string>();
         if (_rutas.TryGetValue(evento, out var destinos))
         {
             foreach (var nombre in destinos)
             {
                 if (!_vistas.TryGetValue(nombre, out var vista) || ReferenceEquals(vista, emisor)) continue;
-                await vista.RefrescarAsync();
-                refrescadas.Add(nombre);
+                try
+                {
+                    await vista.RefrescarAsync();
+                    refrescadas.Add(nombre);
+                }
+                catch (Exception ex)
+                {
+                    fallidas.Add($"{nombre} ({ex.Message})"); // una vista con error no bloquea a las demás
+                }
             }
         }
         _ultimas = refrescadas;
-        Notificado?.Invoke(this, $"{evento} → {string.Join(", ", refrescadas)}");
+        Notificado?.Invoke(this, $"{evento} → {string.Join(", ", refrescadas)}" +
+                                 (fallidas.Count > 0 ? $" | sin refrescar: {string.Join(", ", fallidas)}" : ""));
     }
 }
