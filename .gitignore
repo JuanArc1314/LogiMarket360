@@ -490,7 +490,4 @@ $RECYCLE.BIN/
 *.db-wal
 # Salidas generadas en tiempo de ejecución
 **/datos/
-**/comprobantes/
-**/notificaciones/
-**/logs/
 TestResults/
