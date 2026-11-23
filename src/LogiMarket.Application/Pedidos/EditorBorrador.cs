@@ -7,7 +7,7 @@ using LogiMarket.Domain.Pedidos;
 namespace LogiMarket.Application.Pedidos;
 
 /// Edición en memoria de un borrador con DESHACER/REHACER (PATRÓN MEMENTO: el editor actúa de cliente,
-/// HistorialEdicioneses el cuidador y "Pedido el originador).
+/// HistorialEdiciones es el cuidador y Pedido el originador).
 /// Cada modificación captura el estado completo ANTES de aplicarse.
 public sealed class EditorBorrador
 {
@@ -87,16 +87,17 @@ public sealed class EditorBorrador
     private void Modificar(Action<Pedido> cambio)
     {
         var pedido = ExigirPedido();
-        Historial.Capturar(pedido);
+        var previo = pedido.CrearMemento();
         try
         {
             cambio(pedido);
         }
         catch
         {
-            Historial.Deshacer(pedido); // el cambio inválido no deja rastro en el borrador
+            pedido.RestaurarMemento(previo); // un cambio inválido no deja rastro en el borrador
             throw;
         }
+        Historial.Registrar(previo);
     }
 
     private Pedido ExigirPedido() =>
