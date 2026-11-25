@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Vistas;
 
-/// 02. Panel general: resumen operativo de pedidos, existencias, alertas y métricas de sesión.
+//02 - panel general: resumen operativo de pedidos, existencias, alertas y metricas de sesion
 public sealed class PanelGeneralView : VistaBase
 {
     private readonly FlowLayoutPanel _tarjetas;

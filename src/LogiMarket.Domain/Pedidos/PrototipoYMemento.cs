@@ -3,14 +3,16 @@ using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Domain.Pedidos;
 
-/// PATRÓN PROTOTYPE — contrato de clonación.
+//patron prototype - contrato de clonacion
 public interface IPrototipo<out T>
 {
     T Clonar();
 }
 
-/// PATRÓN MEMENTO — Memento. Estado completo e inmutable de un borrador (cliente, entrega y líneas
-/// anidadas). Su contenido solo lo lee el originador (<see cref="Pedido"/>); el exterior ve un resumen.
+//patron memento - memento
+//estado completo e inmutable de un borrador (cliente, entrega y lineas anidadas)
+//su contenido solo lo lee el originador (pedido)
+//el exterior ve un resumen
 public sealed class PedidoMemento
 {
     internal PedidoMemento(int clienteId, string clienteNombre, CategoriaCliente categoria,
@@ -34,8 +36,9 @@ public sealed class PedidoMemento
     public string Resumen { get; }
 }
 
-/// PATRÓN MEMENTO — Cuidador (caretaker). Deshacer/rehacer hasta <see cref="Capacidad"/> estados.
-/// Al confirmar el pedido se bloquea y se limpia: no permite revertir un cobro ni stock.
+//patron memento - cuidador (caretaker)
+//deshacer/rehacer hasta capacidad estados
+//al confirmar el pedido se bloquea y se limpia: no permite revertir un cobro ni stock
 public sealed class HistorialEdiciones
 {
     public const int Capacidad = 5;
@@ -48,10 +51,10 @@ public sealed class HistorialEdiciones
     public bool PuedeRehacer => !Bloqueado && _rehacer.Count > 0;
     public int EstadosGuardados => _deshacer.Count;
 
-    /// Capturar ANTES de modificar el borrador.
+    //capturar antes de modificar el borrador
     public void Capturar(Pedido pedido) => Registrar(pedido.CrearMemento());
 
-    /// Guarda un memento ya creado (estado previo a un cambio que se aplicó con éxito).
+    //guarda un memento ya creado (estado previo a un cambio que se aplico con exito)
     public void Registrar(PedidoMemento memento)
     {
         ArgumentNullException.ThrowIfNull(memento);
@@ -105,7 +108,7 @@ public sealed class HistorialEdiciones
     }
 }
 
-/// Resultado de valorar un pedido (subtotal, descuento por estrategia y tarifa por familia).
+//resultado de valorar un pedido (subtotal, descuento por estrategia y tarifa por familia)
 public sealed record Valoracion(
     decimal Subtotal,
     string Politica,

@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Vistas;
 
-/// 04. Clientes: búsqueda, registro, categoría y edición.
+//04 - clientes: busqueda, registro, categoria y edicion
 public sealed class ClientesView : VistaBase
 {
     private readonly DataGridView _grid = UiKit.Grid("Clientes");

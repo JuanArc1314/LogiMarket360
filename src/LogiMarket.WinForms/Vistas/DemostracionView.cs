@@ -7,8 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Vistas;
 
-/// Pantalla de demostración/pruebas (solo ADMIN): cambia el proveedor simulado, induce fallo de cobro
-/// o de notificador, desplaza días y restablece la base controlada. No altera reglas ni resultados.
+//pantalla de demostracion/pruebas (solo ADMIN): cambia el proveedor simulado
+//induce fallo de cobro o de notificador, desplaza dias y restablece la base controlada
+//no altera reglas ni resultados
 public sealed class DemostracionView : VistaBase
 {
     private readonly RadioButton _legado = new() { Text = "Pasarela LEGADA (Adapter)", AutoSize = true, Checked = true };

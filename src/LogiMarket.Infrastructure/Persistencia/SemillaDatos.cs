@@ -9,8 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LogiMarket.Infrastructure.Persistencia;
 
-/// Semilla IDEMPOTENTE: inserta por clave natural (SKU, usuario, identificación) solo lo que falta.
-/// Relanzarla no duplica registros. Todos los datos son ficticios.
+//semilla idempotente: inserta por clave natural (SKU, usuario, identificacion) solo lo que falta
+//relanzarla no duplica registros
+//todos los datos son ficticios
 public sealed class SemillaDatos
 {
     public static readonly (string Sku, string Nombre, string Categoria, decimal Precio, int Stock, decimal Peso)[] Productos =
@@ -22,7 +23,8 @@ public sealed class SemillaDatos
         ("P05", "Alfombrilla", "Accesorios", 5.00m, 30, 0.10m)
     ];
 
-    /// Cuentas de DEMOSTRACIÓN (ficticias, solo para la práctica). Se guardan con hash.
+    //cuentas de demostracion (ficticias, solo para la practica)
+    //se guardan con hash
     public static readonly (string Usuario, string Nombre, RolUsuario Rol, string Clave)[] CuentasDemo =
     [
         ("admin", "Administrador Demo", RolUsuario.ADMIN, "Admin123*"),
@@ -99,8 +101,8 @@ public sealed class SemillaDatos
     }
 }
 
-/// Crea la base desde cero aplicando MIGRACIONES (no EnsureCreated) y ejecuta la semilla.
-/// También restablece la base controlada para pruebas/demostración.
+//crea la base desde cero aplicando migraciones (no EnsureCreated) y ejecuta la semilla
+//tambien restablece la base controlada para pruebas/demostracion
 public sealed class InicializadorBaseDatos : IRestablecedorDatos
 {
     private readonly LogiMarketDbContext _db;

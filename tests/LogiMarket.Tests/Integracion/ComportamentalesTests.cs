@@ -20,14 +20,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.Tests.Integracion;
 
-/// Patrones comportamentales P23–P34 observados en ejecución.
+//patrones comportamentales P23-P34 observados en ejecucion
 public class ComportamentalesTests
 {
     [Fact(DisplayName = "P23 Chain: cliente inactivo y sin stock → primero CLIENTE; al corregir aparece STOCK; sin cobro")]
     public async Task P23_CadenaDeValidacion()
     {
         await using var e = await EntornoPrueba.CrearAsync(RolUsuario.VENTAS);
-        var p = await e.CrearPedidoAsync("Luis", TipoEntrega.ESTANDAR, ("P04", 5)); // solo hay 4 webcams
+        var p = await e.CrearPedidoAsync("Luis", TipoEntrega.ESTANDAR, ("P04", 5)); //solo hay 4 webcams
         var luis = await e.ClienteIdAsync("Luis");
         await e.EnAmbitoAsync(sp => sp.GetRequiredService<ServicioClientes>()
             .GuardarAsync(new(luis, "0100000002", "Luis Ruiz", "luis.ruiz@example.com", "0990000002", CategoriaCliente.NORMAL, false)));
@@ -42,10 +42,10 @@ public class ComportamentalesTests
         Assert.Equal("STOCK_INSUFICIENTE", r2.CodigoRechazo);
         Assert.Equal(["1-ClienteActivo", "2-LineasCantidades", "3-ReglasStock"], r2.EslabonesEvaluados);
 
-        Assert.Empty(e.Servicio<IBitacoraOperativa>().Consultar(CategoriasBitacora.Pago)); // no se ejecutó el cobro
+        Assert.Empty(e.Servicio<IBitacoraOperativa>().Consultar(CategoriasBitacora.Pago)); //no se ejecuto el cobro
         Assert.Equal(0, await e.ContarAsync(db => db.Pagos.Count()));
 
-        e.IniciarSesion(RolUsuario.CONSULTA); // el último eslabón: autorización
+        e.IniciarSesion(RolUsuario.CONSULTA); //el ultimo eslabon: autorizacion
         var p2 = await e.EnAmbitoAsync(async sp => (await sp.GetRequiredService<IConsultasOperativas>().ListarPedidosAsync()).First().Id);
         await e.EnAmbitoAsync(async sp =>
         {
@@ -90,9 +90,9 @@ public class ComportamentalesTests
     public async Task P25_InterpreteFiltra()
     {
         await using var e = await EntornoPrueba.CrearAsync(RolUsuario.VENTAS);
-        var ana = await e.CrearPedidoAsync("Ana", TipoEntrega.ESTANDAR, ("KIT_TELETRABAJO", 1));   // 59 → PAGADO
-        var luis = await e.CrearPedidoAsync("Luis", TipoEntrega.ESTANDAR, ("P05", 2));             // 15 → PAGADO
-        var carmen = await e.CrearPedidoAsync("Carmen", TipoEntrega.ESTANDAR, ("P03", 10));        // 90 → BORRADOR
+        var ana = await e.CrearPedidoAsync("Ana", TipoEntrega.ESTANDAR, ("KIT_TELETRABAJO", 1));   //59 -> PAGADO
+        var luis = await e.CrearPedidoAsync("Luis", TipoEntrega.ESTANDAR, ("P05", 2));             //15 -> PAGADO
+        var carmen = await e.CrearPedidoAsync("Carmen", TipoEntrega.ESTANDAR, ("P03", 10));        //90 -> BORRADOR
         await e.ConfirmarAsync(ana.Id);
         await e.ConfirmarAsync(luis.Id);
 
@@ -112,8 +112,8 @@ public class ComportamentalesTests
         var sinParentesis = parser.Analizar("ESTADO = BORRADOR OR ESTADO = PAGADO AND TOTAL >= 50");
         var conParentesis = parser.Analizar("(ESTADO = BORRADOR OR ESTADO = PAGADO) AND TOTAL >= 50");
         var borradorBarato = P(EstadoPedido.BORRADOR, 10);
-        Assert.True(sinParentesis.Interpretar(borradorBarato));    // BORRADOR OR (PAGADO AND ≥50)
-        Assert.False(conParentesis.Interpretar(borradorBarato));   // (BORRADOR OR PAGADO) AND ≥50
+        Assert.True(sinParentesis.Interpretar(borradorBarato));    //BORRADOR or (PAGADO and ≥50)
+        Assert.False(conParentesis.Interpretar(borradorBarato));   //(BORRADOR or PAGADO) and ≥50
         Assert.Equal("(ESTADO = BORRADOR OR (ESTADO = PAGADO AND TOTAL >= 50))", sinParentesis.ToString());
 
         foreach (var invalido in new[] { "ESTADO = PAGADO AND", "(TOTAL >= 50", "TOTAL >= abc", "ESTADO >= PAGADO",
@@ -166,7 +166,7 @@ public class ComportamentalesTests
         var r2 = await e.EnAmbitoAsync(sp => sp.GetRequiredService<ProcesadorOutbox>().ProcesarPendientesAsync());
 
         Assert.Equal((1, 0), (r1.Procesados, r1.Fallidos));
-        Assert.Equal(0, r2.Procesados); // no hay reprocesamiento
+        Assert.Equal(0, r2.Procesados); //no hay reprocesamiento
         Assert.Equal(1, await e.ContarAsync(db => db.Notificaciones.Count()));
         Assert.Equal(1, await e.ContarAsync(db => db.Auditorias.Count(a => a.Accion == "EVENTO_PedidoPagado")));
         Assert.Equal(1, e.Servicio<MetricasSesion>().Instantanea().PedidosPagados);
@@ -183,7 +183,7 @@ public class ComportamentalesTests
         var stockAntes = await e.StockAsync("P05");
 
         var ok = await DevolverAsync(e, defecto, MotivoDevolucion.DEFECTO, sinUso: false);
-        e.Reloj.AvanzarDias(-10); // día 10 desde la entrega
+        e.Reloj.AvanzarDias(-10); //dia 10 desde la entrega
         var rechazo = await DevolverAsync(e, arrepentido, MotivoDevolucion.ARREPENTIMIENTO, sinUso: true);
 
         Assert.True(ok.Aceptada);
@@ -196,7 +196,7 @@ public class ComportamentalesTests
         Assert.Equal(stockAntes, await e.StockAsync("P05"));
         Assert.Equal(1, await e.ContarAsync(db => db.Devoluciones.Count()));
 
-        // Misma estructura: arrepentimiento dentro de plazo pero con producto usado → falla en el paso 2.
+        //misma estructura: arrepentimiento dentro de plazo pero con producto usado -> falla en el paso 2
         e.Reloj.AvanzarDias(-5);
         var usado = await DevolverAsync(e, arrepentido, MotivoDevolucion.ARREPENTIMIENTO, sinUso: false);
         Assert.Equal(("PRODUCTO_USADO", 2), (usado.Codigo, usado.PasosEjecutados.Count));

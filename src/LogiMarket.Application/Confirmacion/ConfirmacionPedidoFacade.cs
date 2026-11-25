@@ -23,14 +23,16 @@ public sealed record ResultadoConfirmacion(
         new(false, false, pedidoId, codigoPedido, estado, 0m, null, codigo, mensaje, eslabones ?? []);
 }
 
-/// Colaboradores de persistencia agrupados (evita un constructor con demasiados parámetros).
+//colaboradores de persistencia agrupados (evita un constructor con demasiados parametros)
 public sealed record RepositoriosConfirmacion(
     IRepositorioPedidos Pedidos, IRepositorioClientes Clientes, IRepositorioCatalogo Catalogo,
     IRepositorioPagos Pagos, IRepositorioOutbox Outbox);
 
-/// PATRÓN FACADE. Una única operación de confirmación que coordina autorización, validación (Chain),
-/// valoración (Strategy + Abstract Factory), cobro simulado (Proxy → Decorator → Adapter), stock,
-/// persistencia y Outbox en UNA transacción. No contiene SQL ni reglas de descuento: delega.
+//patron facade
+//una unica operacion de confirmacion que coordina autorizacion, validacion (chain)
+//valoracion (strategy + abstract factory), cobro simulado (proxy -> decorator -> adapter)
+//stock, persistencia y outbox en una transaccion
+//no contiene SQL ni reglas de descuento: delega
 public sealed class ConfirmacionPedidoFacade
 {
     private readonly IUnidadDeTrabajo _unidad;
@@ -78,7 +80,7 @@ public sealed class ConfirmacionPedidoFacade
         {
             return await _unidad.EjecutarEnTransaccionAsync(async t =>
             {
-                // 1) Idempotencia: misma clave ⇒ se devuelve el resultado original sin volver a cobrar.
+                //1) idempotencia: misma clave -> se devuelve el resultado original sin volver a cobrar
                 var previo = await _repos.Pagos.ObtenerPorClaveAsync(claveIdempotencia, t);
                 if (previo is not null)
                     return await ResultadoRepetidoAsync(previo, pedidoId, t);
@@ -88,7 +90,7 @@ public sealed class ConfirmacionPedidoFacade
                 var cliente = await _repos.Clientes.ObtenerAsync(pedido.ClienteId, t);
                 var productos = await _repos.Catalogo.ObtenerProductosAsync(pedido.RequerimientosStock().Select(r => r.Sku), t);
 
-                // 2) Chain of Responsibility: cliente → líneas → stock → autorización/condiciones.
+                //2) chain of responsibility: cliente -> lineas -> stock -> autorizacion/condiciones
                 var validacion = _cadenas.CrearParaConfirmacion().Validar(new ContextoValidacionPedido
                 {
                     Pedido = pedido, Cliente = cliente, Productos = productos, Usuario = _sesion.Actual
@@ -97,20 +99,20 @@ public sealed class ConfirmacionPedidoFacade
                     return ResultadoConfirmacion.Rechazo(pedidoId, validacion.Rechazo!.Codigo, validacion.Rechazo.ToString(),
                         validacion.EslabonesEvaluados, pedido.Codigo, pedido.Estado);
 
-                // 3) Valoración y transición (State) dentro del dominio.
+                //3) valoracion y transicion (state) dentro del dominio
                 var ahora = _reloj.Ahora;
                 var usuario = _sesion.NombreUsuario;
                 _valorador.Aplicar(pedido);
                 if (pedido.Estado == EstadoPedido.BORRADOR) pedido.Validar(ahora, usuario);
 
-                // 4) Cobro simulado protegido: Proxy → Decorator → Adapter.
+                //4) cobro simulado protegido: proxy -> decorator -> adapter
                 var cobro = await _pasarela.CobrarAsync(pedido.Total, claveIdempotencia, t);
                 if (!cobro.Aprobado)
                     throw new CobroRechazadoException(cobro.Motivo ?? "Cobro rechazado por el proveedor.");
                 cobroAprobado = cobro;
                 montoCobrado = pedido.Total;
 
-                // 5) Stock, pedido, pago y Outbox en la MISMA transacción.
+                //5) stock, pedido, pago y outbox en la misma transaccion
                 _inventario.DescontarPorVenta(pedido, productos, ahora, usuario);
                 pedido.RegistrarPago(claveIdempotencia, ahora, usuario);
                 _repos.Pagos.Agregar(new Pago(pedido.Id, cobro.Referencia!, claveIdempotencia, pedido.Total,
@@ -138,11 +140,12 @@ public sealed class ConfirmacionPedidoFacade
         }
         catch (Exception ex) when (ex is ViolacionUnicidadException or ConflictoConcurrenciaException or ExcepcionDominio)
         {
-            // La transacción ya se revirtió. Si hubo cobro aprobado, se compensa (anulación simulada).
+            //la transaccion ya se revirtio
+            //si hubo cobro aprobado, se compensa (anulacion simulada)
             if (cobroAprobado is not null)
                 await CompensarAsync(cobroAprobado, montoCobrado, claveIdempotencia, ct);
 
-            // Carrera con la misma clave: el otro intento ya confirmó → se devuelve ese resultado.
+            //carrera con la misma clave: el otro intento ya confirmo -> se devuelve ese resultado
             if (ex is ViolacionUnicidadException)
             {
                 var original = await _repos.Pagos.ObtenerPorClaveAsync(claveIdempotencia, ct);

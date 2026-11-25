@@ -5,9 +5,9 @@ using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Infrastructure.Pagos;
 
-/// PATRÓN ADAPTER (de objeto). Convierte CobrarAsync(decimal, clave) en
-/// PasarelaLegadaSimulada.CobrarCentavos y traduce sus códigos al resultado contractual,
-/// sin modificar el código legado.
+//patron adapter (de objeto)
+//convierte CobrarAsync(decimal, clave) en PasarelaLegadaSimulada.CobrarCentavos y traduce sus
+//codigos al resultado contractual, sin modificar el codigo legado
 public sealed class PasarelaLegadaAdapter : IPasarelaPago
 {
     private readonly PasarelaLegadaSimulada _legado;
@@ -36,7 +36,7 @@ public sealed class PasarelaLegadaAdapter : IPasarelaPago
     }
 }
 
-/// Segundo proveedor simulado con API moderna, sustituible por DI (mismo contrato).
+//segundo proveedor simulado con api moderna, sustituible por DI (mismo contrato)
 public sealed class PasarelaAlternaSimulada : IPasarelaPago
 {
     private readonly ConfiguracionDemostracion _configuracion;
@@ -64,7 +64,7 @@ public sealed class PasarelaAlternaSimulada : IPasarelaPago
     }
 }
 
-/// Selecciona el proveedor simulado activo (configurable desde la pantalla de demostración).
+//selecciona el proveedor simulado activo (configurable desde la pantalla de demostracion)
 public sealed class PasarelaConmutable : IPasarelaPago
 {
     private readonly PasarelaLegadaAdapter _legado;
@@ -86,7 +86,8 @@ public sealed class PasarelaConmutable : IPasarelaPago
         Actual.CobrarAsync(monto, claveIdempotencia, ct);
 }
 
-/// Reembolso/anulación simulada (interfaz segregada; el legado no la implementa).
+//reembolso/anulacion simulada (interfaz segregada
+//el legado no la implementa)
 public sealed class ServicioReembolsoSimulado : IPasarelaReembolso
 {
     private readonly IBitacoraOperativa _bitacora;

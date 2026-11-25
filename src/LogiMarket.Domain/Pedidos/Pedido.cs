@@ -5,17 +5,18 @@ using LogiMarket.Domain.Pedidos.Estados;
 
 namespace LogiMarket.Domain.Pedidos;
 
-/// Agregado raíz Pedido. Conserva sus invariantes: las transiciones se delegan en objetos de
-/// estado (PATRÓN STATE), la edición solo es posible en BORRADOR y no hay setters públicos.
-/// Implementa PROTOTYPE Clonar y es el ORIGINADOR del PATRÓN MEMENTO.
+//agregado raiz pedido
+//conserva sus invariantes: las transiciones se delegan en objetos de estado (patron state)
+//la edicion solo es posible en BORRADOR y no hay setters publicos
+//implementa prototype clonar y es el originador del patron memento
 public sealed class Pedido : IPrototipo<Pedido>
 {
     private readonly List<PedidoDetalle> _lineas = new();
     private readonly List<PedidoHistorialEstado> _historial = new();
 
-    private Pedido() { } // EF Core
+    private Pedido() { } //EF Core
 
-    /// Solo el <see cref="PedidoBuilder"/> crea pedidos nuevos (garantiza cliente y líneas).
+    //solo el PedidoBuilder crea pedidos nuevos (garantiza cliente y lineas)
     internal Pedido(Cliente cliente, TipoEntrega entrega, DateTime fecha, string usuario)
     {
         AsignarCliente(cliente);
@@ -49,7 +50,7 @@ public sealed class Pedido : IPrototipo<Pedido>
     public bool Devuelto { get; private set; }
     public DateTime? FechaDevolucion { get; private set; }
 
-    /// Token de concurrencia optimista.
+    //token de concurrencia optimista
     public int Version { get; private set; }
 
     public IReadOnlyList<PedidoDetalle> Lineas => _lineas.AsReadOnly();
@@ -59,10 +60,10 @@ public sealed class Pedido : IPrototipo<Pedido>
     public decimal PesoTotalKg => _lineas.Sum(l => l.PesoUnitarioKg * l.Cantidad);
     public decimal ImporteProductosNeto => Dinero.Redondear(Subtotal - Descuento);
 
-    ///Estado actual como objeto (PATRÓN STATE).
+    //estado actual como objeto (patron state)
     public EstadoPedidoBase EstadoActual => EstadosPedido.Para(Estado);
 
-    // -------------------- Edición (solo BORRADOR) --------------------
+    //edicion (solo BORRADOR)
 
     public void AgregarLinea(IElementoCatalogo elemento, int cantidad)
     {
@@ -104,7 +105,7 @@ public sealed class Pedido : IPrototipo<Pedido>
         AsignarCliente(cliente);
     }
 
-    /// Reemplaza todas las líneas tomando precios actuales del catálogo (re-instantánea).
+    //reemplaza todas las lineas tomando precios actuales del catalogo (re-instantanea)
     public void ReemplazarLineas(IEnumerable<(IElementoCatalogo Elemento, int Cantidad)> lineas)
     {
         EstadoActual.ExigirEdicion();
@@ -126,7 +127,7 @@ public sealed class Pedido : IPrototipo<Pedido>
         Codigo = Guardia.Texto(codigo, "El código", 20);
     }
 
-    /// Aplica el resultado de la calculadora (Strategy + Abstract Factory) verificando coherencia.
+    //aplica el resultado de la calculadora (strategy + abstract factory) verificando coherencia
     public void AplicarValoracion(Valoracion valoracion)
     {
         if (Estado is not (EstadoPedido.BORRADOR or EstadoPedido.VALIDADO))
@@ -144,7 +145,7 @@ public sealed class Pedido : IPrototipo<Pedido>
         Total = valoracion.Total;
     }
 
-    /// Cantidades por SKU final a descontar del inventario (instantánea de composición).
+    //cantidades por SKU final a descontar del inventario (instantanea de composicion)
     public IReadOnlyList<(string Sku, int Cantidad)> RequerimientosStock() =>
         _lineas.SelectMany(l => l.Componentes.Select(c => (c.Sku, Cantidad: c.CantidadPorUnidad * l.Cantidad)))
             .GroupBy(x => x.Sku, StringComparer.OrdinalIgnoreCase)
@@ -153,7 +154,7 @@ public sealed class Pedido : IPrototipo<Pedido>
 
     public decimal CalcularSubtotal() => Dinero.Redondear(_lineas.Sum(l => l.Subtotal));
 
-    // -------------------- Transiciones (delegadas al State) --------------------
+    //transiciones (delegadas al state)
 
     public void Validar(DateTime fecha, string usuario) => EstadoActual.Validar(this, fecha, usuario);
     public void RegistrarPago(string claveIdempotencia, DateTime fecha, string usuario) =>
@@ -164,7 +165,7 @@ public sealed class Pedido : IPrototipo<Pedido>
     public void RegistrarDevolucion(DateTime fecha, string usuario, string motivo) =>
         EstadoActual.Devolver(this, fecha, usuario, motivo);
 
-    // Operaciones internas que solo los objetos de estado pueden invocar.
+    //operaciones internas que solo los objetos de estado pueden invocar
     internal void TransicionarA(EstadoPedido nuevo, DateTime fecha, string usuario, string nota)
     {
         if (nuevo == Estado)
@@ -191,10 +192,10 @@ public sealed class Pedido : IPrototipo<Pedido>
         Version++;
     }
 
-    // -------------------- PROTOTYPE --------------------
+    //prototype
 
-    /// Copia profunda como nuevo BORRADOR: líneas y componentes con colecciones nuevas;
-    /// no copia Id, código, estado, pago, clave de idempotencia ni historial.
+    //copia profunda como nuevo BORRADOR: lineas y componentes con colecciones nuevas
+    //no copia id, codigo, estado, pago, clave de idempotencia ni historial
     public Pedido Clonar() => ClonarComoBorrador(DateTime.Now, "sistema");
 
     public Pedido ClonarComoBorrador(DateTime fecha, string usuario)
@@ -217,7 +218,7 @@ public sealed class Pedido : IPrototipo<Pedido>
         return copia;
     }
 
-    // -------------------- MEMENTO (originador) --------------------
+    //memento (originador)
 
     public PedidoMemento CrearMemento() =>
         new(ClienteId, ClienteNombre, CategoriaCliente, Entrega, _lineas.Select(l => l.ClonarProfundo()).ToList());
@@ -234,11 +235,11 @@ public sealed class Pedido : IPrototipo<Pedido>
         Entrega = memento.Entrega;
         _lineas.Clear();
         foreach (var linea in memento.Lineas)
-            _lineas.Add(linea.ClonarProfundo()); // el memento permanece inmutable
+            _lineas.Add(linea.ClonarProfundo()); //el memento permanece inmutable
         RecalcularSubtotal();
     }
 
-    // -------------------- Auxiliares --------------------
+    //auxiliares
 
     private void AsignarCliente(Cliente cliente)
     {

@@ -30,14 +30,15 @@ public sealed class ContextoDevolucion
     public int DiasDesdeEntrega => Pedido.FechaEntrega is { } entrega ? (Ahora.Date - entrega.Date).Days : -1;
 }
 
-/// Colaboradores comunes de todas las variantes de devolución.
+//colaboradores comunes de todas las variantes de devolucion
 public sealed record ColaboradoresDevolucion(
     IRepositorioDevoluciones Devoluciones, IRepositorioOutbox Outbox, IPasarelaReembolso Reembolsos,
     ServicioInventario Inventario, SerializadorEventos Serializador);
 
-/// PATRÓN TEMPLATE METHOD. ProcesarAsync fija la secuencia invariante:
-/// verificar elegibilidad → inspeccionar condición → calcular reembolso → registrar devolución/stock → generar evento.
-/// Las variantes (Defecto, Arrepentimiento) solo personalizan los pasos permitidos.
+//patron template method
+//ProcesarAsync fija la secuencia invariante: verificar elegibilidad -> inspeccionar condicion
+//-> calcular reembolso -> registrar devolucion/stock -> generar evento
+//las variantes (defecto, arrepentimiento) solo personalizan los pasos permitidos
 public abstract class ProcesoDevolucion
 {
     private readonly ColaboradoresDevolucion _c;
@@ -46,10 +47,10 @@ public abstract class ProcesoDevolucion
 
     public abstract MotivoDevolucion Motivo { get; }
 
-    /// Plazo máximo en días desde la entrega.
+    //plazo maximo en dias desde la entrega
     protected abstract int DiasMaximos { get; }
 
-    /// MÉTODO PLANTILLA: la estructura es la misma para toda variante.
+    //metodo plantilla: la estructura es la misma para toda variante
     public async Task<ResultadoDevolucion> ProcesarAsync(ContextoDevolucion ctx, CancellationToken ct = default)
     {
         var pasos = new List<string>();
@@ -74,7 +75,7 @@ public abstract class ProcesoDevolucion
             monto, devolucion.ReferenciaReembolso, ctx.DiasDesdeEntrega, pasos);
     }
 
-    // ---- Pasos con comportamiento común (pueden especializarse) ----
+    //pasos con comportamiento comun (pueden especializarse)
 
     protected virtual (string Codigo, string Mensaje)? VerificarElegibilidad(ContextoDevolucion ctx)
     {
@@ -91,13 +92,13 @@ public abstract class ProcesoDevolucion
 
     protected abstract (string Codigo, string Mensaje)? InspeccionarCondicion(ContextoDevolucion ctx);
 
-    /// Importe de productos después del descuento, sin la tarifa de envío. 
+    //importe de productos despues del descuento, sin la tarifa de envio
     protected virtual decimal CalcularReembolso(ContextoDevolucion ctx) => ctx.Pedido.ImporteProductosNeto;
 
-    /// Gancho: si las unidades vuelven al stock vendible. }
+    //gancho: si las unidades vuelven al stock vendible
     protected virtual bool ReintegraStock => true;
 
-    // ---- Pasos invariantes ----
+    //pasos invariantes
 
     private async Task<Devolucion> RegistrarDevolucionYStockAsync(ContextoDevolucion ctx, decimal monto, CancellationToken ct)
     {
@@ -124,7 +125,8 @@ public abstract class ProcesoDevolucion
         new(false, causa.Codigo, causa.Mensaje, 0m, null, ctx.DiasDesdeEntrega, pasos);
 }
 
-/// DEFECTO: hasta 30 días; se acepta con el producto defectuoso (no exige "sin uso"). 
+//defecto: hasta 30 dias
+//se acepta con el producto defectuoso (no exige "sin uso")
 public sealed class DevolucionPorDefecto(ColaboradoresDevolucion colaboradores) : ProcesoDevolucion(colaboradores)
 {
     public override MotivoDevolucion Motivo => MotivoDevolucion.DEFECTO;
@@ -132,7 +134,7 @@ public sealed class DevolucionPorDefecto(ColaboradoresDevolucion colaboradores) 
     protected override (string Codigo, string Mensaje)? InspeccionarCondicion(ContextoDevolucion ctx) => null;
 }
 
-/// ARREPENTIMIENTO: hasta 7 días y siempre que el producto esté sin uso. 
+//arrepentimiento: hasta 7 dias y siempre que el producto este sin uso
 public sealed class DevolucionPorArrepentimiento(ColaboradoresDevolucion colaboradores) : ProcesoDevolucion(colaboradores)
 {
     public override MotivoDevolucion Motivo => MotivoDevolucion.ARREPENTIMIENTO;

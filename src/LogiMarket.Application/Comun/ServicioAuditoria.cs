@@ -4,8 +4,9 @@ using LogiMarket.Domain.Operaciones;
 
 namespace LogiMarket.Application.Comun;
 
-/// Registra auditoría persistente FUERA de las transacciones de negocio (p. ej. intentos rechazados,
-/// inicios de sesión). Los eventos de negocio exitosos se auditan vía Outbox → Observer.
+//registra auditoria persistente fuera de las transacciones de negocio (por ejemplo intentos
+//rechazados, inicios de sesion)
+//los eventos de negocio exitosos se auditan via outbox -> observer
 public sealed class ServicioAuditoria
 {
     private readonly IRepositorioAuditoria _repositorio;

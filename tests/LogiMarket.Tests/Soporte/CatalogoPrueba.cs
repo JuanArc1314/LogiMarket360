@@ -3,7 +3,7 @@ using LogiMarket.Domain.Clientes;
 
 namespace LogiMarket.Tests.Soporte;
 
-/// Catálogo oficial de la guía en memoria (pruebas unitarias de dominio).
+//catalogo oficial de la guia en memoria (pruebas unitarias de dominio)
 public sealed class CatalogoPrueba
 {
     public CatalogoPrueba()

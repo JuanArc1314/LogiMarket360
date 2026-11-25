@@ -5,8 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LogiMarket.Infrastructure.Persistencia;
 
-/// Lado de CONSULTA (CQRS básico) con AsNoTracking. Los ordenamientos/sumas sobre decimal se hacen
-/// en memoria porque SQLite almacena decimal como TEXT (sin aritmética exacta en el motor).
+//lado de CONSULTA (CQRS basico) con AsNoTracking
+//los ordenamientos/sumas sobre decimal se hacen en memoria porque SQLite almacena decimal como
+//text (sin aritmetica exacta en el motor)
 internal sealed class ConsultasOperativasEf(LogiMarketDbContext db) : IConsultasOperativas
 {
     public const int UmbralStockBajo = 3;
@@ -27,7 +28,8 @@ internal sealed class ConsultasOperativasEf(LogiMarketDbContext db) : IConsultas
 
     public async Task<IReadOnlyList<KitDto>> ListarKitsAsync(CancellationToken ct = default)
     {
-        // Grafo con seguimiento para que EF enlace sub-kits; no se guardan cambios desde aquí.
+        //grafo con seguimiento para que EF enlace sub-kits
+        //no se guardan cambios desde aqui
         var kits = await db.Kits.Include(k => k.Componentes).ThenInclude(c => c.Producto).ToListAsync(ct);
         return kits.OrderBy(k => k.Sku).Select(k => new KitDto(k.Id, k.Sku, k.Nombre, k.Descripcion, k.PrecioVenta, k.PesoKg,
             string.Join(" + ", k.Componentes.Select(c => $"{c.Elemento.Sku}×{c.Cantidad}")), k.Activo)).ToList();

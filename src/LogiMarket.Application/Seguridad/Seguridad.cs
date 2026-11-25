@@ -18,8 +18,11 @@ public enum Permiso
     AdministrarDemostracion
 }
 
-/// Matriz de permisos por operación. ADMIN: todo; VENTAS: clientes, pedidos, validación, cobro;
-/// BODEGA: preparación, despacho, entrega; CONSULTA: solo lectura.
+//matriz de permisos por operacion
+//ADMIN: todo
+//VENTAS: clientes, pedidos, validacion, cobro
+//BODEGA: preparacion, despacho, entrega
+//CONSULTA: solo lectura
 public static class MatrizPermisos
 {
     private static readonly IReadOnlyDictionary<Permiso, RolUsuario[]> Matriz = new Dictionary<Permiso, RolUsuario[]>
@@ -46,7 +49,7 @@ public static class MatrizPermisos
 
 public sealed record UsuarioSesion(int Id, string NombreUsuario, string NombreCompleto, RolUsuario Rol);
 
-/// Sesión local actual (una por aplicación de escritorio).
+//sesion local actual (una por aplicacion de escritorio)
 public interface ISesionUsuario
 {
     UsuarioSesion? Actual { get; }
@@ -79,7 +82,7 @@ public sealed class SesionUsuario : ISesionUsuario
     }
 }
 
-/// Autorización en la capa de aplicación (un botón deshabilitado NO es la política de seguridad).
+//autorizacion en la capa de aplicacion (un boton deshabilitado no es la politica de seguridad)
 public sealed class Autorizador
 {
     private readonly ISesionUsuario _sesion;
@@ -94,7 +97,7 @@ public sealed class Autorizador
     public bool Puede(Permiso permiso) =>
         _sesion.Actual is { } usuario && MatrizPermisos.Permite(usuario.Rol, permiso);
 
-    /// Devuelve el usuario autorizado o lanza AccesoDenegadoException.
+    //devuelve el usuario autorizado o lanza AccesoDenegadoException
     public UsuarioSesion Exigir(Permiso permiso)
     {
         var usuario = _sesion.Actual;
@@ -112,7 +115,7 @@ public sealed class Autorizador
     }
 }
 
-/// Puerto de hashing de contraseñas (implementado con PBKDF2 en Infrastructure).
+//puerto de hashing de contraseñas (implementado con PBKDF2 en infrastructure)
 public interface IHasherContrasenas
 {
     string Calcular(string contrasena);

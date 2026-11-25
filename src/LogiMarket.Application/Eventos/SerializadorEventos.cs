@@ -3,7 +3,8 @@ using LogiMarket.Domain.Eventos;
 
 namespace LogiMarket.Application.Eventos;
 
-/// Convierte eventos de negocio a registros Outbox y viceversa (JSON, sin tipos dinámicos inseguros).
+//convierte eventos de negocio a registros outbox y viceversa (JSON
+//sin tipos dinamicos inseguros)
 public sealed class SerializadorEventos
 {
     private static readonly IReadOnlyDictionary<string, Type> Tipos = new Dictionary<string, Type>

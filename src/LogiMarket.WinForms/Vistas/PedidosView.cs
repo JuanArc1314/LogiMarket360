@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Vistas;
 
-/// 06. Pedidos e historial: consulta de estados, detalle y trazabilidad de cambios.
+//06 - pedidos e historial: consulta de estados, detalle y trazabilidad de cambios
 public sealed class PedidosView : VistaBase
 {
     private readonly DataGridView _pedidos = UiKit.Grid("Pedidos");

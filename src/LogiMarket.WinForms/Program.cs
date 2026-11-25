@@ -20,7 +20,7 @@ internal static class Program
 
         try
         {
-            // Crea la base desde cero si no existe: migraciones EF Core + seed idempotente.
+            //crea la base desde cero si no existe: migraciones EF Core + seed idempotente
             using var ambito = proveedor.CreateScope();
             ambito.ServiceProvider.GetRequiredService<InicializadorBaseDatos>().InicializarAsync().GetAwaiter().GetResult();
         }
@@ -39,7 +39,7 @@ internal static class Program
 
             using var principal = new MainForm(ui, configuracion);
             System.Windows.Forms.Application.Run(principal);
-            if (!principal.CerroSesion) break; // si solo cerró sesión, vuelve a la pantalla de acceso
+            if (!principal.CerroSesion) break; //si solo cerro sesion, vuelve a la pantalla de acceso
         }
     }
 }

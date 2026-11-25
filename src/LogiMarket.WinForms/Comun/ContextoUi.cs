@@ -6,8 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Comun;
 
-/// Puente entre formularios y casos de uso: cada operación se ejecuta en un ámbito DI propio
-/// (un DbContext por operación), igual que en las pruebas de integración.
+//puente entre formularios y casos de uso: cada operacion se ejecuta en un ambito DI propio (un
+//DbContext por operacion), igual que en las pruebas de integracion
 public sealed class ContextoUi
 {
     private readonly IServiceProvider _raiz;
@@ -36,7 +36,7 @@ public sealed class ContextoUi
         await operacion(ambito.ServiceProvider);
     }
 
-    /// Ejecuta un comando (Command) a través del invocador, en un ámbito propio.
+    //ejecuta un comando (command) a traves del invocador, en un ambito propio
     public Task<Application.Comun.ResultadoOperacion> EjecutarComandoAsync(Func<FabricaComandos, IComandoOperacion> crear) =>
         EjecutarAsync(sp => Invocador.EjecutarAsync(crear(sp.GetRequiredService<FabricaComandos>())));
 }

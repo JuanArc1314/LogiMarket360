@@ -8,12 +8,12 @@ using LogiMarket.Domain.Operaciones;
 
 namespace LogiMarket.Infrastructure.Notificaciones;
 
-/// <summary>Dependencias comunes de los notificadores simulados.</summary>
+//dependencias comunes de los notificadores simulados
 public sealed record EntornoNotificacion(
     IRepositorioNotificaciones Repositorio, IReloj Reloj, ConfiguracionDemostracion Configuracion,
     OpcionesInfraestructura Opciones, IBitacoraOperativa Bitacora);
 
-/// <summary>Base de notificador simulado: idempotente por (evento, canal) y con fallo inducible.</summary>
+//base de notificador simulado: idempotente por (evento, canal) y con fallo inducible
 public abstract class NotificadorSimuladoBase : INotificador
 {
     private readonly EntornoNotificacion _entorno;
@@ -26,7 +26,7 @@ public abstract class NotificadorSimuladoBase : INotificador
     {
         if (_entorno.Configuracion.SimularFalloNotificador)
             throw new InvalidOperationException($"Servicio {Canal} simulado no disponible.");
-        if (await _entorno.Repositorio.ExisteAsync(mensaje.EventoId, Canal, ct)) return; // sin duplicados
+        if (await _entorno.Repositorio.ExisteAsync(mensaje.EventoId, Canal, ct)) return; //sin duplicados
 
         var cuerpo = Formatear(mensaje);
         var carpeta = Path.Combine(_entorno.Opciones.DirectorioNotificaciones, Canal.ToLowerInvariant());
@@ -64,7 +64,7 @@ public sealed class NotificadorSmsSimulado(EntornoNotificacion entorno) : Notifi
     }
 }
 
-/// <summary>PATRÓN FACTORY METHOD — Creador concreto EMAIL.</summary>
+//patron factory method - creador concreto EMAIL
 public sealed class CreadorNotificadorEmail(EntornoNotificacion entorno) : CreadorNotificador
 {
     public override string Canal => CanalesNotificacion.Email;
@@ -73,7 +73,7 @@ public sealed class CreadorNotificadorEmail(EntornoNotificacion entorno) : Cread
         string.IsNullOrWhiteSpace(e.ClienteEmail) ? "sin-correo@example.com" : e.ClienteEmail;
 }
 
-/// <summary>PATRÓN FACTORY METHOD — Creador concreto SMS.</summary>
+//patron factory method - creador concreto SMS
 public sealed class CreadorNotificadorSms(EntornoNotificacion entorno) : CreadorNotificador
 {
     public override string Canal => CanalesNotificacion.Sms;

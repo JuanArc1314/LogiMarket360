@@ -7,7 +7,8 @@ using LogiMarket.Domain.Seguridad;
 
 namespace LogiMarket.Application.Puertos;
 
-// PATRÓN REPOSITORY: interfaces del núcleo (ISP: pequeñas y por agregado). Adaptadores EF Core en Infrastructure.
+//patron repository: interfaces del nucleo (ISP: pequeñas y por agregado)
+//adaptadores EF Core en infrastructure
 
 public interface IRepositorioCatalogo
 {
@@ -84,11 +85,11 @@ public interface IRepositorioNotificaciones
     void Agregar(Notificacion notificacion);
 }
 
-/// UNIT OF WORK materializado por el DbContext y una transacción real de base de datos.
+//unit of work materializado por el DbContext y una transaccion real de base de datos
 public interface IUnidadDeTrabajo
 {
-    /// Ejecuta la operación dentro de una transacción: si termina sin excepción guarda y confirma;
-    /// ante cualquier excepción revierte y descarta los cambios en memoria.
+    //ejecuta la operacion dentro de una transaccion: si termina sin excepcion guarda y confirma
+    //ante cualquier excepcion revierte y descarta los cambios en memoria
     Task<T> EjecutarEnTransaccionAsync<T>(Func<CancellationToken, Task<T>> operacion, CancellationToken ct = default);
 
     Task GuardarCambiosAsync(CancellationToken ct = default);
@@ -96,7 +97,7 @@ public interface IUnidadDeTrabajo
     void DescartarCambios();
 }
 
-/// Puerto para restablecer la base de pruebas controlada (solo demostración/ADMIN).
+//puerto para restablecer la base de pruebas controlada (solo demostracion/ADMIN)
 public interface IRestablecedorDatos
 {
     Task RestablecerAsync(CancellationToken ct = default);

@@ -2,16 +2,18 @@ using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Domain.Catalogo;
 
-/// PATRÓN COMPOSITE — Compuesto. Un kit contiene productos u otros kits.
-/// Precio y peso se calculan recursivamente; no se permite que un kit se contenga directa o indirectamente.
+//patron composite - compuesto
+//un kit contiene productos u otros kits
+//precio y peso se calculan recursivamente
+//no se permite que un kit se contenga directa o indirectamente
 public sealed class KitCompuesto : IElementoCatalogo
 {
-    /// Profundidad máxima de anidamiento admitida (defensa ante datos corruptos).
+    //profundidad maxima de anidamiento admitida (defensa ante datos corruptos)
     public const int ProfundidadMaxima = 16;
 
     private readonly List<KitComponente> _componentes = new();
 
-    private KitCompuesto() { } // EF Core
+    private KitCompuesto() { } //EF Core
 
     public KitCompuesto(string sku, string nombre, string descripcion)
     {
@@ -27,7 +29,7 @@ public sealed class KitCompuesto : IElementoCatalogo
     public string Descripcion { get; private set; } = string.Empty;
     public bool Activo { get; private set; }
 
-    /// Vista de solo lectura de los componentes directos (para persistencia y presentación).
+    //vista de solo lectura de los componentes directos (para persistencia y presentacion)
     public IReadOnlyList<KitComponente> Componentes => _componentes.AsReadOnly();
 
     public bool EsCompuesto => true;
@@ -43,7 +45,8 @@ public sealed class KitCompuesto : IElementoCatalogo
         Descripcion = Guardia.TextoOpcional(descripcion);
     }
 
-    /// Agrega un producto o kit. Rechaza ciclos (KIT_CICLICO) y cantidades no positivas.
+    //agrega un producto o kit
+    //rechaza ciclos (KIT_CICLICO) y cantidades no positivas
     public void AgregarComponente(IElementoCatalogo elemento, int cantidad)
     {
         ArgumentNullException.ThrowIfNull(elemento);
@@ -90,7 +93,7 @@ public sealed class KitCompuesto : IElementoCatalogo
         return false;
     }
 
-    // Acceso restringido para el iterador (no se entrega la lista interna).
+    //acceso restringido para el iterador (no se entrega la lista interna)
     internal int CantidadComponentes => _componentes.Count;
     internal KitComponente ComponenteEn(int indice) => _componentes[indice];
 

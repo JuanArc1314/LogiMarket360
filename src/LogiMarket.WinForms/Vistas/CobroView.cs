@@ -11,8 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Vistas;
 
-/// 07. Confirmación y cobro: resumen de importes, proveedor simulado y cobro protegido
-/// (Command → Facade → Chain → Proxy → Decorator → Adapter) con clave de idempotencia.
+//07 - confirmacion y cobro: resumen de importes
+//proveedor simulado y cobro protegido (command -> facade -> chain -> proxy -> decorator ->
+//adapter) con clave de idempotencia
 public sealed class CobroView : VistaBase
 {
     private readonly ComboBox _pedido = UiKit.Combo("Pedido a cobrar", 260);
@@ -49,7 +50,7 @@ public sealed class CobroView : VistaBase
 
     public override void AplicarPermisos()
     {
-        // Solo UX: aunque el botón esté activo, el Proxy y la cadena rechazan roles no autorizados.
+        //solo ux: aunque el boton este activo, el proxy y la cadena rechazan roles no autorizados
         _confirmar.Enabled = _repetir.Enabled = _validar.Enabled = Ui.Puede(Permiso.CobrarPedidos);
         PintarProveedor();
     }
@@ -77,7 +78,7 @@ public sealed class CobroView : VistaBase
     private async Task CargarResumenAsync()
     {
         if (_pedido.SelectedItem is not PedidoResumenDto p) return;
-        NuevaClave(); // una clave por intento de confirmación; se conserva para reintentos
+        NuevaClave(); //una clave por intento de confirmacion se conserva para reintentos
         var d = await Ui.EjecutarAsync(sp => sp.GetRequiredService<IConsultasOperativas>().ObtenerPedidoAsync(p.Id));
         if (d is null) return;
         _resumen.Text =
@@ -121,7 +122,7 @@ public sealed class CobroView : VistaBase
         {
             _ultimoPedidoId = id;
             _ultimaClave = clave;
-            // Post-confirmación: se procesa el Outbox (Observer) y el Mediator refresca las vistas.
+            //post-confirmacion: se procesa el outbox (observer) y el mediator refresca las vistas
             await Ui.EjecutarAsync(sp => sp.GetRequiredService<ProcesadorOutbox>().ProcesarPendientesAsync());
             await NotificarAsync(EventoVista.PedidoConfirmado);
             await RefrescarAsync();

@@ -10,7 +10,7 @@ public sealed record RechazoValidacion(string Eslabon, string Codigo, string Men
     public override string ToString() => $"[{Eslabon}] {Codigo}: {Mensaje}";
 }
 
-/// Resultado estructurado: causa del rechazo y orden de eslabones evaluados (observable).
+//resultado estructurado: causa del rechazo y orden de eslabones evaluados (observable)
 public sealed record ResultadoValidacion(RechazoValidacion? Rechazo, IReadOnlyList<string> EslabonesEvaluados)
 {
     public bool EsValido => Rechazo is null;
@@ -25,16 +25,17 @@ public sealed class ContextoValidacionPedido
     public UsuarioSesion? Usuario { get; init; }
 }
 
-/// PATRÓN CHAIN OF RESPONSIBILITY — Manejador abstracto. Cada eslabón evalúa su regla; si falla
-/// devuelve un rechazo estructurado y detiene la cadena, si no delega en el siguiente.
-/// No reemplaza las invariantes del dominio (que se vuelven a verificar en las entidades).
+//patron chain of responsibility - manejador abstracto
+//cada eslabon evalua su regla
+//si falla devuelve un rechazo estructurado y detiene la cadena, si no delega en el siguiente
+//no reemplaza las invariantes del dominio (que se vuelven a verificar en las entidades)
 public abstract class ValidadorPedido
 {
     private ValidadorPedido? _siguiente;
 
     public abstract string Nombre { get; }
 
-    ///Enlaza y devuelve el siguiente para encadenar con fluidez.
+    //enlaza y devuelve el siguiente para encadenar con fluidez
     public ValidadorPedido EnlazarCon(ValidadorPedido siguiente)
     {
         _siguiente = siguiente;
@@ -55,7 +56,7 @@ public abstract class ValidadorPedido
         return _siguiente is null ? new ResultadoValidacion(null, traza) : _siguiente.Procesar(contexto, traza);
     }
 
-    /// Devuelve null si la regla se cumple.
+    //devuelve null si la regla se cumple
     protected abstract RechazoValidacion? Evaluar(ContextoValidacionPedido contexto);
 
     protected RechazoValidacion Rechazar(string codigo, string mensaje) => new(Nombre, codigo, mensaje);
@@ -127,7 +128,8 @@ public sealed class CondicionesConfirmacionValidador : ValidadorPedido
     }
 }
 
-/// Ensambla las cadenas en el orden exigido: cliente → líneas → stock → autorización/condiciones.
+//ensambla las cadenas en el orden exigido: cliente -> lineas -> stock ->
+//autorizacion/condiciones
 public sealed class FabricaCadenaValidacion
 {
     public ValidadorPedido CrearParaValidacion()

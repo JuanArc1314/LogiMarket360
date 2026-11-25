@@ -8,8 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LogiMarket.Infrastructure.Persistencia;
 
-/// DbContext de EF Core (SQLite). Junto con la transacción explícita materializa la UNIDAD DE TRABAJO.
-/// Las entidades del dominio se mapean sin setters públicos (acceso por campos/propiedades privadas).
+//DbContext de EF Core (SQLite)
+//junto con la transaccion explicita materializa la unidad de trabajo
+//las entidades del dominio se mapean sin setters publicos (acceso por campos/propiedades privadas)
 public sealed class LogiMarketDbContext : DbContext
 {
     public LogiMarketDbContext(DbContextOptions<LogiMarketDbContext> options) : base(options) { }

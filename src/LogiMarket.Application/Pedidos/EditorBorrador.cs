@@ -6,9 +6,9 @@ using LogiMarket.Domain.Pedidos;
 
 namespace LogiMarket.Application.Pedidos;
 
-/// Edición en memoria de un borrador con DESHACER/REHACER (PATRÓN MEMENTO: el editor actúa de cliente,
-/// HistorialEdiciones es el cuidador y Pedido el originador).
-/// Cada modificación captura el estado completo ANTES de aplicarse.
+//edicion en memoria de un borrador con deshacer/rehacer (patron memento: el editor actua de
+//cliente, HistorialEdiciones es el cuidador y pedido el originador)
+//cada modificacion captura el estado completo antes de aplicarse
 public sealed class EditorBorrador
 {
     private readonly ValoradorPedidos _valorador;
@@ -76,7 +76,7 @@ public sealed class EditorBorrador
         Entrega = Pedido!.Entrega;
     }
 
-    /// Tras confirmar el pedido, el historial se bloquea: no se deshace un cobro.
+    //tras confirmar el pedido, el historial se bloquea: no se deshace un cobro
     public void BloquearHistorial() => Historial.BloquearYLimpiar();
 
     public void MarcarGuardado(int pedidoId) => PedidoId = pedidoId;
@@ -94,7 +94,7 @@ public sealed class EditorBorrador
         }
         catch
         {
-            pedido.RestaurarMemento(previo); // un cambio inválido no deja rastro en el borrador
+            pedido.RestaurarMemento(previo); //un cambio invalido no deja rastro en el borrador
             throw;
         }
         Historial.Registrar(previo);

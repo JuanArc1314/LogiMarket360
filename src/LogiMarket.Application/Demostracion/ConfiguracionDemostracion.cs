@@ -12,8 +12,9 @@ public static class CanalesNotificacion
     public const string Sms = "SMS";
 }
 
-/// Opciones de la pantalla de demostración (singleton). No alteran reglas de negocio ni resultados:
-/// solo eligen el colaborador simulado activo o le indican que falle, para observar el flujo real.
+//opciones de la pantalla de demostracion (singleton)
+//no alteran reglas de negocio ni resultados: solo eligen el colaborador simulado activo o le
+//indican que falle, para observar el flujo real
 public sealed class ConfiguracionDemostracion
 {
     private readonly object _candado = new();

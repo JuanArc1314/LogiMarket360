@@ -9,10 +9,11 @@ public enum CategoriaCliente
     VIP
 }
 
-/// Cliente de LogiMarket. Solo los clientes activos pueden confirmar pedidos.
+//cliente de LogiMarket
+//solo los clientes activos pueden confirmar pedidos
 public sealed class Cliente
 {
-    private Cliente() { } // EF Core
+    private Cliente() { } //EF Core
 
     public Cliente(string identificacion, string nombre, string email, string telefono, CategoriaCliente categoria)
     {

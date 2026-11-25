@@ -22,8 +22,9 @@ public static class NombresVista
         [Panel, Catalogo, Clientes, Carrito, Pedidos, Cobro, Despacho, Devoluciones, Inventario, Reportes, Auditoria, Demostracion];
 }
 
-/// PATRÓN MEDIATOR — Mediador concreto de la ventana principal. Define qué vistas se refrescan ante
-/// cada evento; ninguna pantalla llama directamente a métodos de otra.
+//patron mediator - mediador concreto de la ventana principal
+//define que vistas se refrescan ante cada evento
+//ninguna pantalla llama directamente a metodos de otra
 public sealed class FormularioPrincipalMediator : MediadorVistas
 {
     public FormularioPrincipalMediator() : base(new Dictionary<EventoVista, string[]>
@@ -46,7 +47,7 @@ public sealed class FormularioPrincipalMediator : MediadorVistas
     { }
 }
 
-/// Visor de la salida VISTA PREVIA del Bridge: muestra el comprobante en una ventana.
+//visor de la salida vista previa del bridge: muestra el comprobante en una ventana
 public sealed class VisorDocumentosWinForms : IVisorDocumentos
 {
     public void Mostrar(DocumentoRenderizado documento)

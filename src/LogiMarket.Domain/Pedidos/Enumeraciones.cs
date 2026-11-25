@@ -10,7 +10,7 @@ public enum EstadoPedido
     CANCELADO
 }
 
-/// Familia de entrega (cada una tiene su fábrica abstracta).
+//familia de entrega (cada una tiene su fabrica abstracta)
 public enum TipoEntrega
 {
     ESTANDAR,

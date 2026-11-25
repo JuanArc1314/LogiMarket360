@@ -1,6 +1,7 @@
 namespace LogiMarket.Domain.Catalogo;
 
-/// PATRÓN VISITOR — Visitante. Nuevas operaciones sobre el catálogo (desglose, peso logístico)
+//patron visitor - visitante
+//nuevas operaciones sobre el catalogo (desglose, peso logistico)
 public interface IVisitanteCatalogo
 {
     void VisitarProducto(ProductoSimple producto, int multiplicador);
@@ -8,13 +9,13 @@ public interface IVisitanteCatalogo
     void SalirDeKit(KitCompuesto kit, int multiplicador);
 }
 
-/// Línea del desglose físico.
+//linea del desglose fisico
 public sealed record LineaDesglose(string Sku, string Nombre, int Cantidad, decimal PesoUnitarioKg)
 {
     public decimal PesoTotalKg => PesoUnitarioKg * Cantidad;
 }
 
-/// Visitante concreto: desglose físico por SKU final y traza de la visita anidada.
+//visitante concreto: desglose fisico por SKU final y traza de la visita anidada
 public sealed class DesgloseFisicoVisitor : IVisitanteCatalogo
 {
     private readonly Dictionary<string, LineaDesglose> _lineas = new(StringComparer.OrdinalIgnoreCase);
@@ -24,7 +25,7 @@ public sealed class DesgloseFisicoVisitor : IVisitanteCatalogo
 
     public IReadOnlyList<LineaDesglose> Lineas => _orden.Select(s => _lineas[s]).ToList();
 
-    /// Recorrido observable, p. ej. "KIT_TELETRABAJO > KIT_OFICINA > P01".
+    //recorrido observable, por ejemplo "KIT_TELETRABAJO > KIT_OFICINA > P01"
     public IReadOnlyList<string> Traza => _traza;
 
     public void VisitarProducto(ProductoSimple producto, int multiplicador)
@@ -48,7 +49,7 @@ public sealed class DesgloseFisicoVisitor : IVisitanteCatalogo
     public void SalirDeKit(KitCompuesto kit, int multiplicador) => _nivel--;
 }
 
-/// Visitante concreto: peso logístico total y peso por kit visitado.
+//visitante concreto: peso logistico total y peso por kit visitado
 public sealed class PesoLogisticoVisitor : IVisitanteCatalogo
 {
     private readonly Stack<(string Sku, decimal Acumulado)> _kitsAbiertos = new();

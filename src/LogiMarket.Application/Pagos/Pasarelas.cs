@@ -4,7 +4,7 @@ using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Application.Pagos;
 
-/// Resultado contractual de un cobro: si es aprobado, siempre trae referencia.
+//resultado contractual de un cobro: si es aprobado, siempre trae referencia
 public sealed record ResultadoCobro(bool Aprobado, string? Referencia, string Proveedor, string? Motivo)
 {
     public static ResultadoCobro Aprobar(string referencia, string proveedor) => new(true, referencia, proveedor, null);
@@ -13,24 +13,26 @@ public sealed record ResultadoCobro(bool Aprobado, string? Referencia, string Pr
 
 public sealed record ResultadoReembolso(bool Aprobado, string? Referencia, string? Motivo);
 
-/// Puerto de cobro (Target del Adapter). CONTRATO (LSP) para TODA implementación:
-/// pre: monto &gt; 0 con máx. 2 decimales y clave no vacía (si no, ArgumentException);
-/// post: Aprobado ⇒ Referencia no vacía; un rechazo de negocio se devuelve (no se lanza).
+//puerto de cobro (target del adapter)
+//contrato (LSP) para toda implementacion: pre: monto > 0 con max 2 decimales y clave no vacia
+//(si no, ArgumentException)
+//post: aprobado -> referencia no vacia
+//un rechazo de negocio se devuelve (no se lanza)
 public interface IPasarelaPago
 {
     string Nombre { get; }
     Task<ResultadoCobro> CobrarAsync(decimal monto, string claveIdempotencia, CancellationToken ct = default);
 }
 
-/// ISP: el reembolso es otra interfaz pequeña. La pasarela legada no sabe reembolsar y no está
-/// obligada a implementar una operación que no aplica.
+//ISP: el reembolso es otra interfaz pequeña
+//la pasarela legada no sabe reembolsar y no esta obligada a implementar una operacion que no aplica
 public interface IPasarelaReembolso
 {
     Task<ResultadoReembolso> ReembolsarAsync(string referenciaCobro, decimal monto, string claveIdempotencia,
         CancellationToken ct = default);
 }
 
-/// Validación única de precondiciones del contrato (DRY entre proveedores).
+//validacion unica de precondiciones del contrato (DRY entre proveedores)
 public static class ContratoPasarela
 {
     public static void ValidarEntrada(decimal monto, string claveIdempotencia)
@@ -42,9 +44,10 @@ public static class ContratoPasarela
     }
 }
 
-/// PATRÓN PROXY (de protección). Verifica rol VENTAS/ADMIN ANTES de delegar en el Decorator y el
-/// Adapter. Un rol CONSULTA/BODEGA nunca alcanza la pasarela ni produce LOG de inicio/fin de cobro;
-/// el intento se registra en la auditoría de SEGURIDAD separada.
+//patron proxy (de proteccion)
+//verifica rol VENTAS/ADMIN antes de delegar en el decorator y el adapter
+//un rol CONSULTA/BODEGA nunca alcanza la pasarela ni produce LOG de inicio/fin de cobro
+//el intento se registra en la auditoria de seguridad separada
 public sealed class PagoAutorizadoProxy : IPasarelaPago
 {
     private readonly IPasarelaPago _real;
@@ -75,8 +78,9 @@ public sealed class PagoAutorizadoProxy : IPasarelaPago
     }
 }
 
-/// PATRÓN DECORATOR. Envuelve cualquier IPasarelaPago y registra INICIO → (PASARELA) →
-/// FIN/ERROR con un identificador de correlación, sin alterar el resultado del cobro concreto.
+//patron decorator
+//envuelve cualquier IPasarelaPago y registra inicio -> (pasarela) -> fin/error con un
+//identificador de correlacion, sin alterar el resultado del cobro concreto
 public sealed class AuditoriaPagoDecorator : IPasarelaPago
 {
     private readonly IPasarelaPago _interna;

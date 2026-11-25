@@ -1,6 +1,6 @@
 namespace LogiMarket.Infrastructure;
 
-/// Rutas de ejecución (base SQLite, comprobantes, notificaciones simuladas y bitácora).
+//rutas de ejecucion (base SQLite, comprobantes, notificaciones simuladas y bitacora)
 public sealed class OpcionesInfraestructura
 {
     public OpcionesInfraestructura(string directorioDatos, string nombreBaseDatos = "logimarket.db")
@@ -16,6 +16,7 @@ public sealed class OpcionesInfraestructura
     public string DirectorioNotificaciones => Path.Combine(DirectorioDatos, "notificaciones");
     public string RutaBitacora => Path.Combine(DirectorioDatos, "logs", "bitacora.log");
 
-    /// Iteraciones PBKDF2 (configurable para pruebas rápidas; producción usa el valor por defecto).
+    //iteraciones PBKDF2 (configurable para pruebas rapidas
+    //produccion usa el valor por defecto)
     public int IteracionesHash { get; init; } = 100_000;
 }

@@ -5,27 +5,27 @@ namespace LogiMarket.Application.Notificaciones;
 
 public sealed record MensajeNotificacion(Guid EventoId, string Destinatario, string Destino, string Asunto, string Cuerpo);
 
-/// <summary>Producto del Factory Method: todos los notificadores comparten este contrato.</summary>
+//producto del factory method: todos los notificadores comparten este contrato
 public interface INotificador
 {
     string Canal { get; }
     Task EnviarAsync(MensajeNotificacion mensaje, CancellationToken ct = default);
 }
 
-/// <summary>
-/// PATRÓN FACTORY METHOD — Creador abstracto. La operación <see cref="NotificarAsync"/> es común;
-/// cada creador concreto (EMAIL, SMS) decide QUÉ notificador crear en <see cref="CrearNotificador"/>.
-/// </summary>
+//patron factory method - creador abstracto
+//la operacion NotificarAsync es comun
+//cada creador concreto (EMAIL, SMS) decide que notificador crear en CrearNotificador
 public abstract class CreadorNotificador
 {
     public abstract string Canal { get; }
 
-    /// <summary>MÉTODO DE FÁBRICA.</summary>
+    //metodo de fabrica
     protected abstract INotificador CrearNotificador();
 
     protected abstract string ResolverDestino(IEventoNegocio evento);
 
-    /// <summary>Crea el notificador, arma el mensaje desde el evento y lo envía. Devuelve el notificador usado.</summary>
+    //crea el notificador, arma el mensaje desde el evento y lo envia
+    //devuelve el notificador usado
     public async Task<INotificador> NotificarAsync(IEventoNegocio evento, CancellationToken ct = default)
     {
         var notificador = CrearNotificador();
@@ -36,7 +36,7 @@ public abstract class CreadorNotificador
     }
 }
 
-/// <summary>Selecciona el creador según la configuración (fuera de los formularios).</summary>
+//selecciona el creador segun la configuracion (fuera de los formularios)
 public sealed class SelectorCreadorNotificador
 {
     private readonly IReadOnlyDictionary<string, CreadorNotificador> _creadores;

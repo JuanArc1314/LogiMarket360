@@ -8,7 +8,8 @@ using LogiMarket.Tests.Soporte;
 
 namespace LogiMarket.Tests.Dominio;
 
-/// <summary>Pruebas de regresión de defectos reales encontrados durante la construcción (ver docs/RIESGOS_DISENO.md).</summary>
+//pruebas de regresion de defectos reales encontrados durante la construccion (ver
+//docs/RIESGOS_DISENO.md)
 public class RegresionTests
 {
     private readonly CatalogoPrueba _c = new();
@@ -28,7 +29,7 @@ public class RegresionTests
         Assert.Throws<ExcepcionDominio>(() => editor.CambiarCantidad("NO-EXISTE", 1));
 
         Assert.Equal(2, editor.Lineas.Single().Cantidad);
-        Assert.False(editor.PuedeRehacer);          // antes del ajuste quedaba un "rehacer" fantasma
+        Assert.False(editor.PuedeRehacer);          //antes del ajuste quedaba un "rehacer" fantasma
         Assert.Equal(1, editor.Historial.EstadosGuardados);
         editor.Deshacer();
         Assert.Equal(1, editor.Lineas.Single().Cantidad);

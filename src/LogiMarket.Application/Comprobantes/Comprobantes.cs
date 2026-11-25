@@ -9,22 +9,23 @@ namespace LogiMarket.Application.Comprobantes;
 
 public sealed record DocumentoRenderizado(string Titulo, string NombreArchivo, string Contenido);
 
-/// <summary>PATRÓN BRIDGE — Implementador: medio de salida del documento.</summary>
+//patron bridge - implementador: medio de salida del documento
 public interface ISalidaDocumento
 {
     string Medio { get; }
 
-    /// <summary>Transmite realmente el contenido; devuelve la ubicación o descripción de la salida.</summary>
+    //transmite realmente el contenido
+    //devuelve la ubicacion o descripcion de la salida
     Task<string> TransmitirAsync(DocumentoRenderizado documento, CancellationToken ct = default);
 }
 
-/// <summary>Puerto del visor de documentos (la ventana de vista previa vive en WinForms).</summary>
+//puerto del visor de documentos (la ventana de vista previa vive en WinForms)
 public interface IVisorDocumentos
 {
     void Mostrar(DocumentoRenderizado documento);
 }
 
-/// <summary>Visor por defecto en memoria (pruebas y ejecución sin interfaz).</summary>
+//visor por defecto en memoria (pruebas y ejecucion sin interfaz)
 public sealed class VisorDocumentosMemoria : IVisorDocumentos
 {
     public DocumentoRenderizado? Ultimo { get; private set; }
@@ -37,7 +38,7 @@ public static class MediosSalida
     public const string ArchivoTxt = "ARCHIVO_TXT";
 }
 
-/// <summary>Implementador concreto: VISTA PREVIA en pantalla.</summary>
+//implementador concreto: vista previa en pantalla
 public sealed class SalidaVistaPrevia : ISalidaDocumento
 {
     private readonly IVisorDocumentos _visor;
@@ -53,10 +54,9 @@ public sealed class SalidaVistaPrevia : ISalidaDocumento
     }
 }
 
-/// <summary>
-/// PATRÓN BRIDGE — Abstracción. Un comprobante sabe QUÉ contenido produce y delega el CÓMO se emite
-/// en <see cref="ISalidaDocumento"/>. 2 comprobantes × 2 salidas = 4 combinaciones sin 4 clases.
-/// </summary>
+//patron bridge - abstraccion
+//un comprobante sabe que contenido produce y delega el como se emite en ISalidaDocumento
+//2 comprobantes x 2 salidas = 4 combinaciones sin 4 clases
 public abstract class Comprobante
 {
     protected static readonly CultureInfo Cultura = CultureInfo.InvariantCulture;
@@ -92,7 +92,7 @@ public abstract class Comprobante
     }
 }
 
-/// <summary>Abstracción refinada: comprobante de VENTA.</summary>
+//abstraccion refinada: comprobante de venta
 public sealed class ComprobanteVenta : Comprobante
 {
     private readonly PedidoDetalleDto _pedido;
@@ -116,7 +116,7 @@ public sealed class ComprobanteVenta : Comprobante
     }
 }
 
-/// <summary>Abstracción refinada: comprobante de DEVOLUCIÓN.</summary>
+//abstraccion refinada: comprobante de devolucion
 public sealed class ComprobanteDevolucion : Comprobante
 {
     private readonly PedidoDetalleDto _pedido;
@@ -147,7 +147,7 @@ public sealed class ComprobanteDevolucion : Comprobante
 
 public enum TipoComprobante { Venta, Devolucion }
 
-/// <summary>Combina en tiempo de ejecución el tipo de comprobante con el medio de salida elegido.</summary>
+//combina en tiempo de ejecucion el tipo de comprobante con el medio de salida elegido
 public sealed class ServicioComprobantes
 {
     private readonly IConsultasOperativas _consultas;

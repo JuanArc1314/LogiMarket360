@@ -9,8 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Vistas;
 
-/// 05. Carrito y borrador: selección de líneas (productos y kits), totales verificables y
-/// Deshacer/Rehacer (Memento). Nada se pierde sin confirmación.
+//05 - carrito y borrador: seleccion de lineas (productos y kits)
+//totales verificables y deshacer/rehacer (memento)
+//nada se pierde sin confirmacion
 public sealed class CarritoView : VistaBase
 {
     private sealed record LineaVista(string Sku, string Descripcion, string Tipo, int Cantidad, decimal PrecioUnitario,
@@ -111,7 +112,7 @@ public sealed class CarritoView : VistaBase
             _borradores.Items.Clear();
             _borradores.Items.AddRange(pedidos.Where(p => p.Estado == EstadoPedido.BORRADOR).Cast<object>().ToArray());
 
-            // Si el borrador en edición ya fue confirmado en otra pantalla, se bloquea su historial.
+            //si el borrador en edicion ya fue confirmado en otra pantalla, se bloquea su historial
             if (_editor?.PedidoId is { } id && pedidos.FirstOrDefault(p => p.Id == id) is { Estado: not EstadoPedido.BORRADOR } confirmado)
             {
                 _editor.BloquearHistorial();

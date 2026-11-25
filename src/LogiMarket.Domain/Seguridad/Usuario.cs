@@ -10,10 +10,11 @@ public enum RolUsuario
     CONSULTA
 }
 
-/// Usuario local. La contraseña solo se conserva como hash (nunca en texto claro).
+//usuario local
+//la contraseña solo se conserva como hash (nunca en texto claro)
 public sealed class Usuario
 {
-    private Usuario() { } // EF Core
+    private Usuario() { } //EF Core
 
     public Usuario(string nombreUsuario, string nombreCompleto, RolUsuario rol, string hashContrasena)
     {

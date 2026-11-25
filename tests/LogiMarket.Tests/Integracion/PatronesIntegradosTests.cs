@@ -18,7 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.Tests.Integracion;
 
-/// Patrones creacionales y estructurales observados en el flujo real (P11, P15–P22).
+//patrones creacionales y estructurales observados en el flujo real (P11, P15-P22)
 public class PatronesIntegradosTests
 {
     [Fact(DisplayName = "P11 Factory Method: alternar EMAIL/SMS tras eventos; cada creador emite con su notificador")]
@@ -42,7 +42,7 @@ public class PatronesIntegradosTests
         Assert.Contains(avisos, n => n.Canal == "SMS" && n.Destino == "0990000002" && n.Mensaje.Length <= 160);
         Assert.Single(Directory.GetFiles(Path.Combine(e.Opciones.DirectorioNotificaciones, "email")));
 
-        // El creador concreto devuelve el notificador concreto (sin crear concretos en la UI).
+        //el creador concreto devuelve el notificador concreto (sin crear concretos en la UI)
         await e.EnAmbitoAsync(async sp =>
         {
             var selector = sp.GetRequiredService<SelectorCreadorNotificador>();
@@ -89,9 +89,9 @@ public class PatronesIntegradosTests
         Assert.True(r1.Exito && r2.Exito);
         Assert.StartsWith("LEG", r1.ReferenciaPago);
         Assert.StartsWith("ALT-", r2.ReferenciaPago);
-        Assert.Equal(1, legado.TransaccionesProcesadas); // el legado solo procesó el primer cobro (en centavos)
+        Assert.Equal(1, legado.TransaccionesProcesadas); //el legado solo proceso el primer cobro (en centavos)
         var bitacora = e.Servicio<IBitacoraOperativa>().Consultar(CategoriasBitacora.Pago);
-        Assert.Contains(bitacora, b => b.Mensaje.Contains("LEGADO.CobrarCentavos(2300,")); // Ana VIP: 20.00 − 2.00 + 5.00 = 23.00 → 2300 centavos
+        Assert.Contains(bitacora, b => b.Mensaje.Contains("LEGADO.CobrarCentavos(2300,")); //ana vip: 20.00 − 2.00 + 5.00 = 23.00 -> 2300 centavos
         Assert.Contains(bitacora, b => b.Mensaje.StartsWith("ALTERNO.charge("));
     }
 
@@ -145,7 +145,7 @@ public class PatronesIntegradosTests
         Assert.True(ok.Aprobado);
         e.Servicio<ConfiguracionDemostracion>().ConfigurarRechazoCobro(true);
         var ko = await pasarela.CobrarAsync(10.00m, "K-DEC-2");
-        Assert.False(ko.Aprobado); // el Decorator no altera el resultado
+        Assert.False(ko.Aprobado); //el decorator no altera el resultado
 
         var pagos = bitacora.Consultar(CategoriasBitacora.Pago);
         foreach (var grupo in pagos.GroupBy(p => p.Correlacion))
@@ -153,7 +153,7 @@ public class PatronesIntegradosTests
         Assert.Equal(2, pagos.Select(p => p.Correlacion).Distinct().Count());
         Assert.Contains(pagos, p => p.Etapa == "FIN" && p.Mensaje.StartsWith("RECHAZADO"));
 
-        // Excepción del proveedor (monto inválido) → INICIO → ERROR.
+        //excepcion del proveedor (monto invalido) -> inicio -> error
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => pasarela.CobrarAsync(-1m, "K-DEC-3"));
         Assert.Equal("ERROR", bitacora.Consultar(CategoriasBitacora.Pago).Last().Etapa);
     }
@@ -190,7 +190,7 @@ public class PatronesIntegradosTests
         var (filas, informe) = DemostracionFlyweight.Generar(productos, 1000);
 
         Assert.Equal(1000, filas.Count);
-        Assert.True(ReferenceEquals(filas[0].Metadatos, filas[5].Metadatos)); // misma fila SKU P01
+        Assert.True(ReferenceEquals(filas[0].Metadatos, filas[5].Metadatos)); //misma fila SKU P01
         Assert.True(informe.ReferenciasCompartidas);
         Assert.Equal(5, informe.InstanciasMetadatosCompartidas);
         Assert.Equal(1000, informe.InstanciasMetadatosSinCompartir);
@@ -210,7 +210,7 @@ public class PatronesIntegradosTests
             await Assert.ThrowsAsync<AccesoDenegadoException>(() => e.Servicio<IPasarelaPago>().CobrarAsync(59.00m, "K-PROXY"));
 
             Assert.Equal(0, legado.TransaccionesProcesadas);
-            Assert.Empty(bitacora.Consultar(CategoriasBitacora.Pago));                 // ni INICIO ni FIN
+            Assert.Empty(bitacora.Consultar(CategoriasBitacora.Pago));                 //ni inicio ni fin
             Assert.Single(bitacora.Consultar(CategoriasBitacora.Seguridad), b => b.Etapa == "COBRO_DENEGADO");
         }
 

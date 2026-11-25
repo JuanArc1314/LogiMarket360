@@ -5,7 +5,7 @@ using LogiMarket.Application.Seguridad;
 
 namespace LogiMarket.Infrastructure.Salidas;
 
-/// PATRÓN BRIDGE — Implementador concreto: escribe el comprobante en un archivo TXT real.
+//patron bridge - implementador concreto: escribe el comprobante en un archivo TXT real
 public sealed class SalidaArchivoTxt : ISalidaDocumento
 {
     private readonly OpcionesInfraestructura _opciones;
@@ -23,8 +23,8 @@ public sealed class SalidaArchivoTxt : ISalidaDocumento
     }
 }
 
-/// Bitácora operativa en memoria + archivo de texto (independiente de las transacciones SQLite,
-/// por lo que conserva los LOG de cobros fallidos y denegados).
+//bitacora operativa en memoria + archivo de texto (independiente de las transacciones SQLite
+//por lo que conserva los LOG de cobros fallidos y denegados)
 public sealed class BitacoraOperativaArchivo : IBitacoraOperativa
 {
     private const int MaximoEnMemoria = 5000;
@@ -55,7 +55,7 @@ public sealed class BitacoraOperativaArchivo : IBitacoraOperativa
             }
             catch (IOException)
             {
-                // La bitácora en archivo es complementaria: un fallo de E/S no interrumpe la operación.
+                //la bitacora en archivo es complementaria: un fallo de e/s no interrumpe la operacion
             }
         }
     }

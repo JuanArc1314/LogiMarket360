@@ -5,7 +5,7 @@ using LogiMarket.Domain.Operaciones;
 
 namespace LogiMarket.Application.Devoluciones;
 
-/// Caso de uso de devolución TOTAL: elige la variante por motivo y la ejecuta en una transacción. 
+//caso de uso de devolucion total: elige la variante por motivo y la ejecuta en una transaccion
 public sealed class ServicioDevoluciones
 {
     private readonly IUnidadDeTrabajo _unidad;

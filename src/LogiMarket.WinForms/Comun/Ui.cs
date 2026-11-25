@@ -4,7 +4,7 @@ using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.WinForms.Comun;
 
-/// Paleta y tipografía comunes (coherentes con los wireframes de referencia).
+//paleta y tipografia comunes (coherentes con los wireframes de referencia)
 public static class Estilos
 {
     public static readonly Color Fondo = Color.FromArgb(248, 250, 252);
@@ -25,7 +25,7 @@ public static class Estilos
     public static readonly Font Mono = new("Consolas", 10f);
 }
 
-/// Fábrica de controles reutilizables (DRY entre pantallas).
+//fabrica de controles reutilizables (DRY entre pantallas)
 public static class UiKit
 {
     public static readonly CultureInfo Cultura = CultureInfo.InvariantCulture;
@@ -86,7 +86,7 @@ public static class UiKit
     public static ComboBox Combo(string nombreAccesible, int ancho = 200) => new()
     {
         DropDownStyle = ComboBoxStyle.DropDownList,
-        FormattingEnabled = true, // necesario para que el evento Format personalice el texto
+        FormattingEnabled = true, //necesario para que el evento format personalice el texto
         Width = ancho,
         Font = Estilos.Normal,
         AccessibleName = nombreAccesible,
@@ -107,7 +107,7 @@ public static class UiKit
         return fila;
     }
 
-    /// Etiqueta + control (etiqueta asociada para accesibilidad y validación cercana al campo).
+    //etiqueta + control (etiqueta asociada para accesibilidad y validacion cercana al campo)
     public static FlowLayoutPanel Campo(string etiqueta, Control control)
     {
         control.AccessibleName ??= etiqueta;
@@ -154,7 +154,7 @@ public static class UiKit
             EnableHeadersVisualStyles = false,
             Font = Estilos.Normal,
             AccessibleName = nombreAccesible,
-            StandardTab = true // TAB sale de la grilla hacia el siguiente control
+            StandardTab = true //TAB sale de la grilla hacia el siguiente control
         };
         grid.ColumnHeadersDefaultCellStyle.Font = Estilos.Negrita;
         grid.ColumnHeadersDefaultCellStyle.BackColor = Estilos.Lateral;
@@ -164,7 +164,8 @@ public static class UiKit
         return grid;
     }
 
-    /// Agrega una columna enlazada. formato "M" = moneda con 2 decimales.
+    //agrega una columna enlazada
+    //formato "M" = moneda con 2 decimales
     public static DataGridView Columna(this DataGridView grid, string propiedad, string titulo, int peso = 100, string? formato = null)
     {
         var columna = new DataGridViewTextBoxColumn
@@ -187,7 +188,7 @@ public static class UiKit
         return grid;
     }
 
-    /// Enlaza datos conservando la fila seleccionada (selección persistente tras refrescar).
+    //enlaza datos conservando la fila seleccionada (seleccion persistente tras refrescar)
     public static void Enlazar<T>(this DataGridView grid, IReadOnlyList<T> datos, Func<T, object>? clave = null)
     {
         object? seleccionada = clave is not null && grid.CurrentRow?.DataBoundItem is T actual ? clave(actual) : null;
@@ -211,7 +212,8 @@ public static class UiKit
     public static bool Confirmar(IWin32Window? dueno, string mensaje, string titulo = "Confirmar operación") =>
         MessageBox.Show(dueno, mensaje, titulo, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes;
 
-    /// Traduce excepciones de negocio a mensajes claros; las inesperadas se informan como error.
+    //traduce excepciones de negocio a mensajes claros
+    //las inesperadas se informan como error
     public static string Describir(Exception ex) => ex switch
     {
         ExcepcionDominio d => $"{d.Message}\n(código: {d.Codigo})",

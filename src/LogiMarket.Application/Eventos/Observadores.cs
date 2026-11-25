@@ -7,7 +7,7 @@ using LogiMarket.Domain.Operaciones;
 
 namespace LogiMarket.Application.Eventos;
 
-/// <summary>PATRÓN OBSERVER — Observador.</summary>
+//patron observer - observador
 public interface IObservadorEventos
 {
     string Nombre { get; }
@@ -19,7 +19,7 @@ public sealed record ResultadoPublicacion(IReadOnlyList<string> Notificados, IRe
     public bool Completo => Fallos.Count == 0;
 }
 
-/// PATRÓN OBSERVER — Sujeto/publicador.
+//patron observer - sujeto/publicador
 public interface IPublicadorEventos
 {
     IReadOnlyList<string> Suscriptores { get; }
@@ -46,7 +46,8 @@ public sealed class PublicadorEventos : IPublicadorEventos
 
     public void Desuscribir(IObservadorEventos observador) => _observadores.Remove(observador);
 
-    /// Notifica a todos; un fallo no impide notificar a los demás, pero se informa.
+    //notifica a todos
+    //un fallo no impide notificar a los demas, pero se informa
     public async Task<ResultadoPublicacion> PublicarAsync(IEventoNegocio evento, CancellationToken ct = default)
     {
         var notificados = new List<string>();
@@ -67,7 +68,7 @@ public sealed class PublicadorEventos : IPublicadorEventos
     }
 }
 
-/// Observador de notificación: usa el creador del canal actual (Factory Method).
+//observador de notificacion: usa el creador del canal actual (factory method)
 public sealed class NotificacionObserver : IObservadorEventos
 {
     private readonly SelectorCreadorNotificador _selector;
@@ -80,7 +81,7 @@ public sealed class NotificacionObserver : IObservadorEventos
         _selector.Actual.NotificarAsync(evento, ct);
 }
 
-/// Observador de métricas de sesión (Singleton).
+//observador de metricas de sesion (singleton)
 public sealed class MetricasObserver : IObservadorEventos
 {
     private readonly MetricasSesion _metricas;
@@ -96,7 +97,7 @@ public sealed class MetricasObserver : IObservadorEventos
     }
 }
 
-/// Observador de auditoría persistente (idempotente por identificador de evento).
+//observador de auditoria persistente (idempotente por identificador de evento)
 public sealed class AuditoriaObserver : IObservadorEventos
 {
     private readonly IRepositorioAuditoria _auditoria;

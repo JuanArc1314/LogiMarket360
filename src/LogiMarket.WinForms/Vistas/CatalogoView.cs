@@ -7,7 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Vistas;
 
-/// 03. Catálogo y kits: CRUD de SKU, precios, existencias y estructura de kits anidados (Composite).
+//03 - catalogo y kits: CRUD de SKU, precios
+//existencias y estructura de kits anidados (composite)
 public sealed class CatalogoView : VistaBase
 {
     private readonly DataGridView _productos = UiKit.Grid("Productos");
@@ -116,7 +117,7 @@ public sealed class CatalogoView : VistaBase
         _precio.Value = p.Precio;
         _peso.Value = p.PesoKg;
         _stock.Value = p.Stock;
-        _stock.Enabled = false; // el stock se cambia en Inventario (con movimiento trazable)
+        _stock.Enabled = false; //el stock se cambia en inventario (con movimiento trazable)
     }
 
     private void LimpiarFormulario()

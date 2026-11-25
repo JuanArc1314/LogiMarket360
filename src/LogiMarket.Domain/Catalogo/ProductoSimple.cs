@@ -2,10 +2,11 @@ using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Domain.Catalogo;
 
-/// PATRÓN COMPOSITE — Hoja. Producto físico con SKU único, precio, peso y existencias.
+//patron composite - hoja
+//producto fisico con SKU unico, precio, peso y existencias
 public sealed class ProductoSimple : IElementoCatalogo
 {
-    private ProductoSimple() { } // EF Core
+    private ProductoSimple() { } //EF Core
 
     public ProductoSimple(string sku, string nombre, string categoria, string descripcion,
         decimal precio, decimal pesoKg, int stockInicial)
@@ -28,7 +29,7 @@ public sealed class ProductoSimple : IElementoCatalogo
     public int Stock { get; private set; }
     public bool Activo { get; private set; }
 
-    /// Token de concurrencia optimista (evita sobreventa ante escrituras simultáneas).
+    //token de concurrencia optimista (evita sobreventa ante escrituras simultaneas)
     public int Version { get; private set; }
 
     public decimal PrecioVenta => Precio;
@@ -67,7 +68,8 @@ public sealed class ProductoSimple : IElementoCatalogo
         Version++;
     }
 
-    /// Ajuste manual de inventario (conteo físico). Devuelve la diferencia aplicada.
+    //ajuste manual de inventario (conteo fisico)
+    //devuelve la diferencia aplicada
     public int AjustarStock(int nuevoStock)
     {
         if (nuevoStock < 0)

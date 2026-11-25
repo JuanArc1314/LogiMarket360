@@ -15,7 +15,8 @@ public sealed record BorradorDto(int? PedidoId, int ClienteId, TipoEntrega Entre
 
 public sealed record PedidoGuardadoDto(int Id, string Codigo, EstadoPedido Estado, Valoracion Valoracion);
 
-/// Casos de uso de borradores: crear/editar (Builder), validar (Chain), cancelar (State), clonar (Prototype).
+//casos de uso de borradores: crear/editar (builder), validar (chain), cancelar (state)
+//clonar (prototype)
 public sealed class ServicioPedidos
 {
     private readonly IRepositorioPedidos _pedidos;
@@ -43,7 +44,7 @@ public sealed class ServicioPedidos
         _auditoria = auditoria;
     }
 
-    /// Crea un editor en memoria con historial Deshacer/Rehacer (no persiste hasta guardar).
+    //crea un editor en memoria con historial deshacer/rehacer (no persiste hasta guardar)
     public async Task<EditorBorrador> AbrirEditorAsync(int clienteId, int? pedidoId = null, CancellationToken ct = default)
     {
         _autorizador.Exigir(Permiso.GestionarPedidos);
@@ -66,7 +67,7 @@ public sealed class ServicioPedidos
     public async Task<IElementoCatalogo> ObtenerElementoAsync(string sku, CancellationToken ct = default) =>
         await _catalogo.ObtenerElementoAsync(sku, ct) ?? throw new RecursoNoEncontradoException("SKU", sku);
 
-    /// Guarda el borrador: re-toma la instantánea de precios del catálogo y valora el pedido.
+    //guarda el borrador: re-toma la instantanea de precios del catalogo y valora el pedido
     public async Task<PedidoGuardadoDto> GuardarBorradorAsync(BorradorDto dto, CancellationToken ct = default)
     {
         var usuario = _autorizador.Exigir(Permiso.GestionarPedidos);
@@ -96,7 +97,7 @@ public sealed class ServicioPedidos
                 foreach (var (elemento, cantidad) in lineas) builder.AgregarElemento(elemento, cantidad);
                 pedido = builder.Construir();
                 _pedidos.Agregar(pedido);
-                await _unidad.GuardarCambiosAsync(t);          // obtiene Id
+                await _unidad.GuardarCambiosAsync(t);          //obtiene id
                 pedido.AsignarCodigo($"PED-{pedido.Id:0000}");
             }
             var valoracion = _valorador.Aplicar(pedido);
@@ -106,7 +107,7 @@ public sealed class ServicioPedidos
         return new PedidoGuardadoDto(resultado.pedido.Id, resultado.pedido.Codigo, resultado.pedido.Estado, resultado.valoracion);
     }
 
-    /// BORRADOR → VALIDADO si la cadena (cliente → líneas → stock) lo aprueba.
+    //BORRADOR -> VALIDADO si la cadena (cliente -> lineas -> stock) lo aprueba
     public async Task<ResultadoValidacion> ValidarAsync(int pedidoId, CancellationToken ct = default)
     {
         var usuario = _autorizador.Exigir(Permiso.GestionarPedidos);
@@ -141,7 +142,7 @@ public sealed class ServicioPedidos
         return ResultadoOperacion.Ok($"Pedido {codigo} CANCELADO.");
     }
 
-    /// PROTOTYPE: crea un nuevo borrador a partir de otro pedido (plantilla de carrito).
+    //prototype: crea un nuevo borrador a partir de otro pedido (plantilla de carrito)
     public async Task<PedidoGuardadoDto> ClonarComoBorradorAsync(int pedidoId, CancellationToken ct = default)
     {
         var usuario = _autorizador.Exigir(Permiso.GestionarPedidos);
@@ -157,7 +158,7 @@ public sealed class ServicioPedidos
         return new PedidoGuardadoDto(resultado.copia.Id, resultado.copia.Codigo, resultado.copia.Estado, resultado.Item2);
     }
 
-    /// Intento explícito de modificar un pedido (lo rechaza el State si no es BORRADOR).
+    //intento explicito de modificar un pedido (lo rechaza el state si no es BORRADOR)
     public async Task<ResultadoOperacion> CambiarCantidadAsync(int pedidoId, string sku, int cantidad, CancellationToken ct = default)
     {
         _autorizador.Exigir(Permiso.GestionarPedidos);

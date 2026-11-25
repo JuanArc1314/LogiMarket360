@@ -5,8 +5,9 @@ using LogiMarket.Domain.Operaciones;
 
 namespace LogiMarket.Application.Demostracion;
 
-/// Operaciones de la pantalla de demostración (solo ADMIN): cambiar proveedor simulado, inducir fallo
-/// de cobro o de notificador, desplazar días y restablecer la base controlada. Todo queda auditado.
+//operaciones de la pantalla de demostracion (solo ADMIN): cambiar proveedor simulado
+//inducir fallo de cobro o de notificador, desplazar dias y restablecer la base controlada
+//todo queda auditado
 public sealed class ServicioDemostracion
 {
     private readonly ConfiguracionDemostracion _configuracion;

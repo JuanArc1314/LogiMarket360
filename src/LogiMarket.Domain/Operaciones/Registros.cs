@@ -3,7 +3,8 @@ using LogiMarket.Domain.Pedidos;
 
 namespace LogiMarket.Domain.Operaciones;
 
-/// Cobro simulado APROBADO. Únicos: referencia, clave de idempotencia y pedido.
+//cobro simulado aprobado
+//unicos: referencia, clave de idempotencia y pedido
 public sealed class Pago
 {
     private Pago() { }
@@ -39,7 +40,7 @@ public enum TipoMovimiento
     AJUSTE
 }
 
-/// Movimiento de inventario trazable (+ ingreso / − salida) con motivo y referencia.
+//movimiento de inventario trazable (+ ingreso / − salida) con motivo y referencia
 public sealed class MovimientoInventario
 {
     private MovimientoInventario() { }
@@ -70,7 +71,7 @@ public sealed class MovimientoInventario
     public string Usuario { get; private set; } = string.Empty;
 }
 
-/// Despacho con guía simulada (uno por pedido).
+//despacho con guia simulada (uno por pedido)
 public sealed class Despacho
 {
     private Despacho() { }
@@ -111,7 +112,7 @@ public enum MotivoDevolucion
     ARREPENTIMIENTO
 }
 
-/// Devolución TOTAL aceptada (una por pedido) con reembolso simulado único.
+//devolucion total aceptada (una por pedido) con reembolso simulado unico
 public sealed class Devolucion
 {
     private Devolucion() { }
@@ -148,7 +149,7 @@ public enum CategoriaAuditoria
     SISTEMA
 }
 
-/// Bitácora persistente de negocio y seguridad.
+//bitacora persistente de negocio y seguridad
 public sealed class Auditoria
 {
     private Auditoria() { }
@@ -173,7 +174,7 @@ public sealed class Auditoria
     public string? Referencia { get; private set; }
 }
 
-/// Aviso emitido por un notificador simulado (único por evento y canal).
+//aviso emitido por un notificador simulado (unico por evento y canal)
 public sealed class Notificacion
 {
     private Notificacion() { }

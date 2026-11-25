@@ -4,8 +4,9 @@ using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Domain.Pedidos;
 
-/// PATRÓN BUILDER. Ensambla cliente, líneas simples y kits, forma de entrega e instantáneas.
-/// El agregado resultante nace válido: sin cliente o sin líneas no se construye.
+//patron builder
+//ensambla cliente, lineas simples y kits, forma de entrega e instantaneas
+//el agregado resultante nace valido: sin cliente o sin lineas no se construye
 public sealed class PedidoBuilder
 {
     private readonly List<(IElementoCatalogo Elemento, int Cantidad)> _lineas = new();

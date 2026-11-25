@@ -4,7 +4,7 @@ using LogiMarket.Application.Consultas;
 namespace LogiMarket.Application.Catalogo;
 
 
-/// PATRÓN FLYWEIGHT — Estado intrínseco, inmutable y compartido de un SKU (nombre, categoría, descripción).
+//patron flyweight - estado intrinseco, inmutable y compartido de un SKU (nombre, categoria, descripcion)
 public sealed class MetadatosSku
 {
     public MetadatosSku(string sku, string nombre, string categoria, string descripcion)
@@ -21,7 +21,7 @@ public sealed class MetadatosSku
     public string Descripcion { get; }
 }
 
-/// Fila de vista: referencia al flyweight + estado EXTRÍNSECO por fila (stock, cantidad, precio).
+//fila de vista: referencia al flyweight + estado extrinseco por fila (stock, cantidad, precio)
 public sealed class FilaCatalogoVisual
 {
     public FilaCatalogoVisual(int numero, MetadatosSku metadatos, int stock, int cantidad, decimal precioVenta)
@@ -43,7 +43,7 @@ public sealed class FilaCatalogoVisual
     public decimal PrecioVenta { get; }
 }
 
-/// PATRÓN FLYWEIGHT — Fábrica: devuelve SIEMPRE la misma instancia por SKU.
+//patron flyweight - fabrica: devuelve siempre la misma instancia por SKU
 public sealed class CatalogoVisualFlyweightFactory
 {
     private readonly ConcurrentDictionary<string, MetadatosSku> _cache = new(StringComparer.OrdinalIgnoreCase);
@@ -61,8 +61,9 @@ public sealed record InformeFlyweight(
     public long AhorroBytes => BytesSinFlyweight - BytesConFlyweight;
 }
 
-/// Genera N filas de vista y compara bajo condiciones equivalentes (mismas filas, mismos valores
-/// extrínsecos) la memoria asignada con metadatos compartidos frente a metadatos duplicados por fila.
+//genera n filas de vista y compara bajo condiciones equivalentes (mismas filas
+//mismos valores extrinsecos) la memoria asignada con metadatos compartidos frente a metadatos
+//duplicados por fila
 public static class DemostracionFlyweight
 {
     public static (IReadOnlyList<FilaCatalogoVisual> Filas, InformeFlyweight Informe) Generar(
@@ -71,7 +72,7 @@ public static class DemostracionFlyweight
         if (productos.Count == 0) throw new ArgumentException("Se requiere al menos un producto.", nameof(productos));
         if (filas < 1) throw new ArgumentOutOfRangeException(nameof(filas));
 
-        // Calentamiento para no medir la compilación JIT en la primera pasada.
+        //calentamiento para no medir la compilacion JIT en la primera pasada
         ConstruirCompartidas(productos, Math.Min(10, filas), new CatalogoVisualFlyweightFactory());
         ConstruirDuplicadas(productos, Math.Min(10, filas));
 
@@ -113,7 +114,7 @@ public static class DemostracionFlyweight
         for (var i = 0; i < filas; i++)
         {
             var p = productos[i % productos.Count];
-            // Sin Flyweight: cada fila crea sus propios metadatos (copias de texto equivalentes a cargar la vista).
+            //sin flyweight: cada fila crea sus propios metadatos (copias de texto equivalentes a cargar la vista)
             var meta = new MetadatosSku(new string(p.Sku.AsSpan()), new string(p.Nombre.AsSpan()),
                 new string(p.Categoria.AsSpan()), new string(p.Descripcion.AsSpan()));
             lista.Add(new FilaCatalogoVisual(i + 1, meta, p.Stock, 1 + i % 5, p.Precio));

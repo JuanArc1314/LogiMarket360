@@ -5,12 +5,14 @@ namespace LogiMarket.Application.Eventos;
 
 public sealed record ResultadoProcesamientoOutbox(int Procesados, int Fallidos, IReadOnlyList<string> Detalle);
 
-/// Procesa eventos pendientes del Outbox DESPUÉS de que su transacción de negocio se confirmó.
-/// Cada evento se publica a los observadores; si alguno falla, el evento queda pendiente con su
-/// error y se reintenta en la siguiente ejecución (recuperación). Un evento se marca procesado una sola vez.
+//procesa eventos pendientes del outbox despues de que su transaccion de negocio se confirmo
+//cada evento se publica a los observadores
+//si alguno falla, el evento queda pendiente con su error y se reintenta en la siguiente
+//ejecucion (recuperacion)
+//un evento se marca procesado una sola vez
 public sealed class ProcesadorOutbox
 {
-    // Evita que dos procesamientos simultáneos (temporizador y botón) tomen el mismo evento.
+    //evita que dos procesamientos simultaneos (temporizador y boton) tomen el mismo evento
     private static readonly SemaphoreSlim Candado = new(1, 1);
 
     private readonly IRepositorioOutbox _outbox;
@@ -50,7 +52,7 @@ public sealed class ProcesadorOutbox
                         throw new InvalidOperationException(string.Join(" | ", publicacion.Fallos));
 
                     registro.MarcarProcesado(_reloj.Ahora);
-                    await _unidad.GuardarCambiosAsync(ct); // efectos de observadores + marca, juntos
+                    await _unidad.GuardarCambiosAsync(ct); //efectos de observadores + marca, juntos
                     procesados++;
                     detalle.Add($"{registro.Tipo} {registro.Referencia}: procesado ({string.Join(", ", publicacion.Notificados)})");
                     _bitacora.Registrar(CategoriasBitacora.Outbox, "PROCESADO", $"{registro.Tipo} {registro.Referencia} [{id}]");
