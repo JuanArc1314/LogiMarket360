@@ -76,6 +76,6 @@ public sealed class InventarioView : VistaBase
         if (!UiKit.Confirmar(FindForm(), $"¿Ajustar el stock de {p.Sku} de {p.Stock} a {_nuevoStock.Value}?")) return;
         Informar(await Ui.EjecutarAsync(sp => sp.GetRequiredService<ServicioCatalogo>().AjustarStockAsync(p.Sku, (int)_nuevoStock.Value, _motivo.Text)));
         await NotificarAsync(EventoVista.InventarioAjustado);
-        await RefrescarAsync();
+        await RefrescarConservandoMensajeAsync();
     }
 }
