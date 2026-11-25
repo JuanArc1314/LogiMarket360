@@ -60,18 +60,20 @@ public sealed class CatalogoView : VistaBase
             UiKit.Boton("&Filtrar", async (_, _) => await IntentarAsync(RefrescarAsync))));
 
         var panelKits = new Panel { Dock = DockStyle.Fill };
-        _desglose.Dock = DockStyle.Bottom;
-        _desglose.Height = 130;
+        //el desglose va a la derecha de la grilla: abajo quitaba alto y tapaba las filas de botones
+        //cuando la ventana no estaba maximizada
+        _desglose.Dock = DockStyle.Right;
+        _desglose.Width = 380;
         panelKits.Controls.Add(_kits);
         panelKits.Controls.Add(_desglose);
-        panelKits.Controls.Add(UiKit.Fila(UiKit.Campo("Nuevo kit SKU", _nuevoKitSku), UiKit.Campo("Nombre", _nuevoKitNombre), crearKit));
-        panelKits.Controls.Add(UiKit.Fila(UiKit.Campo("Kit", _kit), UiKit.Campo("Componente (SKU o kit)", _componente),
-            UiKit.Campo("Cant.", _cantidadComponente), agregarComp, quitarComp,
+        panelKits.Controls.Add(UiKit.Fila(UiKit.Campo("Nuevo kit SKU", _nuevoKitSku), UiKit.Campo("Nombre", _nuevoKitNombre), crearKit,
             UiKit.Boton("Desglose y peso (Visitor)", async (_, _) => await IntentarAsync(DesglosarAsync))));
+        panelKits.Controls.Add(UiKit.Fila(UiKit.Campo("Kit", _kit), UiKit.Campo("Componente (SKU o kit)", _componente),
+            UiKit.Campo("Cant.", _cantidadComponente), agregarComp, quitarComp));
 
         var division = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 2, ColumnCount = 1 };
-        division.RowStyles.Add(new RowStyle(SizeType.Percent, 55));
-        division.RowStyles.Add(new RowStyle(SizeType.Percent, 45));
+        division.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+        division.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
         division.Controls.Add(UiKit.Grupo("Productos", panelProductos), 0, 0);
         division.Controls.Add(UiKit.Grupo("Kits (Composite: productos y otros kits, sin ciclos)", panelKits), 0, 1);
         Contenido.Controls.Add(division);
@@ -133,11 +135,25 @@ public sealed class CatalogoView : VistaBase
 
     private async Task GuardarProductoAsync()
     {
+        if (!ValidarCampos(
+                (_sku, !string.IsNullOrWhiteSpace(_sku.Text) && !_sku.Text.Trim().Any(char.IsWhiteSpace), "Ingrese un SKU sin espacios."),
+                (_nombre, !string.IsNullOrWhiteSpace(_nombre.Text), "Ingrese el nombre del producto."),
+                (_categoria, !string.IsNullOrWhiteSpace(_categoria.Text), "Ingrese la categoría del producto.")))
+            return;
         var dto = new ProductoEdicionDto(_sku.Text, _nombre.Text, _categoria.Text, _descripcion.Text, _precio.Value, _peso.Value, (int)_stock.Value);
         var esNuevo = !_sku.ReadOnly;
-        var r = await Ui.EjecutarAsync(sp => esNuevo
-            ? sp.GetRequiredService<ServicioCatalogo>().CrearProductoAsync(dto)
-            : sp.GetRequiredService<ServicioCatalogo>().ActualizarProductoAsync(dto));
+        Application.Comun.ResultadoOperacion r;
+        try
+        {
+            r = await Ui.EjecutarAsync(sp => esNuevo
+                ? sp.GetRequiredService<ServicioCatalogo>().CrearProductoAsync(dto)
+                : sp.GetRequiredService<ServicioCatalogo>().ActualizarProductoAsync(dto));
+        }
+        catch (Domain.Comun.ExcepcionDominio ex) when (ex.Codigo is "SKU_DUPLICADO" or "SKU_INVALIDO")
+        {
+            MarcarCampo(_sku, ex.Message);
+            return;
+        }
         Informar(r);
         await NotificarAsync(EventoVista.CatalogoModificado);
         await RefrescarAsync();

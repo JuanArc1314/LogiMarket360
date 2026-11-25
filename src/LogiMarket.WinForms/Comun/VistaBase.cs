@@ -8,6 +8,8 @@ namespace LogiMarket.WinForms.Comun;
 public abstract class VistaBase : UserControl, IVistaColaboradora
 {
     private readonly Label _estado;
+    private readonly ErrorProvider _errores = new() { BlinkStyle = ErrorBlinkStyle.NeverBlink };
+    private readonly HashSet<Control> _camposMarcados = new();
     private bool _cargada;
 
     protected VistaBase(ContextoUi ui, string titulo, string subtitulo)
@@ -55,9 +57,52 @@ public abstract class VistaBase : UserControl, IVistaColaboradora
 
     protected Task NotificarAsync(EventoVista evento) => Ui.Mediador.NotificarAsync(this, evento);
 
+    //refresca la vista sin borrar el mensaje de la operacion que se acaba de ejecutar
+    //(el refresco escribe su propio resumen en la barra de estado)
+    protected async Task RefrescarConservandoMensajeAsync()
+    {
+        var (texto, color) = (_estado.Text, _estado.ForeColor);
+        await RefrescarAsync();
+        _estado.Text = texto;
+        _estado.ForeColor = color;
+    }
+
     protected void MostrarExito(string mensaje) { _estado.ForeColor = Estilos.Exito; _estado.Text = "✔ " + mensaje; }
     protected void MostrarError(string mensaje) { _estado.ForeColor = Estilos.Error; _estado.Text = "✖ " + mensaje.Replace('\n', ' '); }
     protected void MostrarInfo(string mensaje) { _estado.ForeColor = Estilos.TextoSuave; _estado.Text = mensaje; }
+
+    //validacion cercana al campo: el icono de error aparece junto al control invalido
+    //y el primer mensaje tambien se muestra en la barra de estado
+    protected bool ValidarCampos(params (Control Campo, bool Valido, string Mensaje)[] reglas)
+    {
+        LimpiarErrores();
+        var fallidas = reglas.Where(r => !r.Valido).ToList();
+        foreach (var (campo, _, mensaje) in fallidas) Marcar(campo, mensaje);
+        if (fallidas.Count == 0) return true;
+        MostrarError(fallidas[0].Mensaje);
+        fallidas[0].Campo.Focus();
+        return false;
+    }
+
+    //marca un campo con un error que viene de application o del dominio (sku duplicado, correo invalido...)
+    protected void MarcarCampo(Control campo, string mensaje)
+    {
+        Marcar(campo, mensaje);
+        MostrarError(mensaje);
+        campo.Focus();
+    }
+
+    protected void LimpiarErrores()
+    {
+        foreach (var campo in _camposMarcados) _errores.SetError(campo, string.Empty);
+    }
+
+    private void Marcar(Control campo, string mensaje)
+    {
+        _errores.SetError(campo, mensaje);
+        //el error se quita en cuanto el usuario corrige el campo
+        if (_camposMarcados.Add(campo)) campo.TextChanged += (_, _) => _errores.SetError(campo, string.Empty);
+    }
 
     //ejecuta una accion de la UI mostrando errores de negocio de forma clara
     protected async Task IntentarAsync(Func<Task> accion)

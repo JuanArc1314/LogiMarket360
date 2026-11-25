@@ -80,9 +80,23 @@ public sealed class ClientesView : VistaBase
 
     private async Task GuardarAsync()
     {
+        if (!ValidarCampos(
+                (_identificacion, !string.IsNullOrWhiteSpace(_identificacion.Text), "Ingrese la identificación del cliente."),
+                (_nombre, !string.IsNullOrWhiteSpace(_nombre.Text), "Ingrese el nombre del cliente."),
+                (_email, string.IsNullOrWhiteSpace(_email.Text) || System.Net.Mail.MailAddress.TryCreate(_email.Text.Trim(), out _),
+                    "El correo electrónico no tiene un formato válido.")))
+            return;
         var dto = new ClienteEdicionDto(_idEdicion, _identificacion.Text, _nombre.Text, _email.Text, _telefono.Text,
             Enum.Parse<CategoriaCliente>((string)_categoria.SelectedItem!), _activo.Checked);
-        Informar(await Ui.EjecutarAsync(sp => sp.GetRequiredService<ServicioClientes>().GuardarAsync(dto)));
+        try
+        {
+            Informar(await Ui.EjecutarAsync(sp => sp.GetRequiredService<ServicioClientes>().GuardarAsync(dto)));
+        }
+        catch (Domain.Comun.ExcepcionDominio ex) when (ex.Codigo is "IDENTIFICACION_DUPLICADA" or "EMAIL_INVALIDO")
+        {
+            MarcarCampo(ex.Codigo == "EMAIL_INVALIDO" ? _email : _identificacion, ex.Message);
+            return;
+        }
         await NotificarAsync(EventoVista.ClienteModificado);
         await RefrescarAsync();
     }

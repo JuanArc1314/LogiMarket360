@@ -102,7 +102,7 @@ public sealed class PedidosView : VistaBase
         var r = await Ui.EjecutarComandoAsync(f => f.Cancelar(p.Id, "Cancelado desde Pedidos e historial"));
         Informar(r);
         if (r.Exito) await NotificarAsync(EventoVista.PedidoCancelado);
-        await RefrescarAsync();
+        await RefrescarConservandoMensajeAsync();
     }
 
     private async Task ClonarAsync()
@@ -111,7 +111,7 @@ public sealed class PedidosView : VistaBase
         var copia = await Ui.EjecutarAsync(sp => sp.GetRequiredService<ServicioPedidos>().ClonarComoBorradorAsync(p.Id));
         MostrarExito($"{p.Codigo} clonado como {copia.Codigo} (BORRADOR).");
         await NotificarAsync(EventoVista.BorradorGuardado);
-        await RefrescarAsync();
+        await RefrescarConservandoMensajeAsync();
     }
 
     private async Task ComprobanteAsync()

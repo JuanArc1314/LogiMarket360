@@ -144,17 +144,11 @@ public sealed class CarritoView : VistaBase
 
     private async Task AgregarAsync()
     {
-        if (_elemento.SelectedItem is not ElementoVendibleDto v)
-        {
-            MostrarError("Seleccione un producto o kit.");
+        if (!ValidarCampos(
+                (_cliente, _editor is not null, "Seleccione primero el cliente."),
+                (_elemento, _elemento.SelectedItem is ElementoVendibleDto, "Seleccione un producto o kit.")))
             return;
-        }
-        if (_editor is null)
-        {
-            MostrarError("Seleccione primero el cliente.");
-            _cliente.Focus();
-            return;
-        }
+        var v = (ElementoVendibleDto)_elemento.SelectedItem!;
         var elemento = await Ui.EjecutarAsync(sp => sp.GetRequiredService<ServicioPedidos>().ObtenerElementoAsync(v.Sku));
         await Editar(e => e.Agregar(elemento, (int)_cantidad.Value));
     }
