@@ -37,7 +37,12 @@ public sealed class MainForm : Form
         //cabecera
         var cabecera = new Panel { Dock = DockStyle.Top, Height = 56, BackColor = Color.White, Padding = new Padding(20, 0, 20, 0) };
         cabecera.Controls.Add(new Label { Text = "LOGIMARKET 360", Font = Estilos.Titulo, ForeColor = Estilos.Texto, AutoSize = true, Location = new Point(18, 12) });
-        var sesion = new FlowLayoutPanel { Dock = DockStyle.Right, AutoSize = true, FlowDirection = FlowDirection.LeftToRight, Padding = new Padding(0, 12, 0, 0) };
+        //sin salto de linea: si la fila se partia, el boton quedaba fuera de la cabecera de 56 px
+        var sesion = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Right, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            FlowDirection = FlowDirection.LeftToRight, WrapContents = false, Padding = new Padding(0, 10, 0, 0)
+        };
         sesion.Controls.Add(new Label { Text = $"{usuario.Rol} · {usuario.NombreUsuario} · Sesión local", AutoSize = true, ForeColor = Estilos.TextoSuave, Margin = new Padding(0, 8, 12, 0) });
         sesion.Controls.Add(UiKit.Boton("Cerrar &sesión", async (_, _) => await CerrarSesionAsync()));
         cabecera.Controls.Add(sesion);

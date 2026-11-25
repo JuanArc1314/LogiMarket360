@@ -95,7 +95,7 @@ public static class UiKit
 
     public static FlowLayoutPanel Fila(params Control[] controles)
     {
-        var fila = new FlowLayoutPanel
+        var fila = new FilaFlujo
         {
             Dock = DockStyle.Top,
             AutoSize = true,
@@ -105,6 +105,19 @@ public static class UiKit
         };
         fila.Controls.AddRange(controles);
         return fila;
+    }
+
+    //fila que calcula su alto con el ancho real del contenedor
+    //sin esto, al estrechar la ventana los controles que saltan a una segunda linea quedaban
+    //debajo de la grilla vecina: se veian a medias y no recibian el clic del raton
+    private sealed class FilaFlujo : FlowLayoutPanel
+    {
+        public override Size GetPreferredSize(Size proposedSize)
+        {
+            if (Dock == DockStyle.Top && Parent is not null)
+                proposedSize = new Size(Math.Max(1, Parent.DisplayRectangle.Width - Margin.Horizontal), 0);
+            return base.GetPreferredSize(proposedSize);
+        }
     }
 
     //etiqueta + control (etiqueta asociada para accesibilidad y validacion cercana al campo)

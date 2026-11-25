@@ -159,6 +159,16 @@ public sealed class ConfirmacionPedidoFacade
             };
             return ResultadoConfirmacion.Rechazo(pedidoId, codigo, ex.Message);
         }
+        catch (Exception ex) when (cobroAprobado is not null)
+        {
+            //error imprevisto despues de un cobro aprobado: la transaccion ya se revirtio
+            //se anula el cobro para que el cliente no quede cobrado sin un pedido pagado
+            await CompensarAsync(cobroAprobado, montoCobrado, claveIdempotencia, CancellationToken.None);
+            await _auditoria.RegistrarAsync(CategoriaAuditoria.NEGOCIO, "COBRO_COMPENSADO",
+                $"Pedido {pedidoId}: {ex.Message}", claveIdempotencia, ct: CancellationToken.None);
+            return ResultadoConfirmacion.Rechazo(pedidoId, "ERROR_CONFIRMACION",
+                "No se pudo completar la confirmación. El cobro aprobado se anuló y el pedido no cambió.");
+        }
     }
 
     private async Task<ResultadoConfirmacion> ResultadoRepetidoAsync(Pago pago, int pedidoId, CancellationToken ct)
