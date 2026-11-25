@@ -3,7 +3,7 @@ using LogiMarket.Domain.Pedidos;
 
 namespace LogiMarket.Application.Pedidos;
 
-/// Elige la fábrica abstracta de la familia de entrega (registro por DI, sin switch).
+//elige la fabrica abstracta de la familia de entrega (registro por DI, sin switch)
 public sealed class SelectorFabricaEntrega
 {
     private readonly IReadOnlyDictionary<TipoEntrega, IFabricaEntrega> _fabricas;
@@ -17,7 +17,7 @@ public sealed class SelectorFabricaEntrega
             : throw new InvalidOperationException($"No hay fábrica registrada para la entrega {tipo}.");
 }
 
-/// Une la calculadora (Strategy) con la fábrica de la familia (Abstract Factory).
+//une la calculadora (strategy) con la fabrica de la familia (abstract factory)
 public sealed class ValoradorPedidos
 {
     private readonly CalculadoraPedido _calculadora;

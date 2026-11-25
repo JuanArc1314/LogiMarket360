@@ -4,7 +4,7 @@ using LogiMarket.Tests.Soporte;
 
 namespace LogiMarket.Tests.Dominio;
 
-/// Composite (P18), Iterator (P27) y Visitor (P34) sobre el catálogo oficial.
+//composite (P18), iterator (P27) y visitor (P34) sobre el catalogo oficial
 public class CatalogoCompositeTests
 {
     private readonly CatalogoPrueba _c = new();
@@ -23,10 +23,10 @@ public class CatalogoCompositeTests
         var directo = Assert.Throws<ExcepcionDominio>(() => _c.KitOficina.AgregarComponente(_c.KitOficina, 1));
         Assert.Equal("KIT_CICLICO", directo.Codigo);
 
-        // KIT_TELETRABAJO ya contiene KIT_OFICINA: meterlo dentro de KIT_OFICINA cerraría un ciclo.
+        //KIT_TELETRABAJO ya contiene KIT_OFICINA: meterlo dentro de KIT_OFICINA cerraria un ciclo
         var indirecto = Assert.Throws<ExcepcionDominio>(() => _c.KitOficina.AgregarComponente(_c.KitTeletrabajo, 1));
         Assert.Equal("KIT_CICLICO", indirecto.Codigo);
-        Assert.Equal(50.00m, _c.KitOficina.PrecioVenta); // sin efectos colaterales
+        Assert.Equal(50.00m, _c.KitOficina.PrecioVenta); //sin efectos colaterales
     }
 
     [Fact(DisplayName = "P27 Iterator: KIT_TELETRABAJO devuelve P01, P02, P03 una vez cada uno y termina")]
@@ -62,7 +62,7 @@ public class CatalogoCompositeTests
         Assert.Equal(["P01", "P02", "P03"], desglose.Lineas.Select(l => l.Sku));
         Assert.Equal(1.00m, peso.PesoTotalKg);
         Assert.Equal(0.90m, peso.PesoPorKit["KIT_OFICINA"]);
-        Assert.Contains(desglose.Traza, t => t.Contains("[KIT_OFICINA]"));      // visita anidada verificable
+        Assert.Contains(desglose.Traza, t => t.Contains("[KIT_OFICINA]"));      //visita anidada verificable
         Assert.StartsWith("  ", desglose.Traza.First(t => t.Contains("[KIT_OFICINA]")));
     }
 

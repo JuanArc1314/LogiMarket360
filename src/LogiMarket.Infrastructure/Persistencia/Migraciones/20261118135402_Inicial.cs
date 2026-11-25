@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LogiMarket.Infrastructure.Persistencia.Migraciones
 {
-    /// <inheritdoc />
     public partial class Inicial : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -576,7 +574,6 @@ namespace LogiMarket.Infrastructure.Persistencia.Migraciones
                 unique: true);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

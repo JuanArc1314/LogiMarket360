@@ -3,7 +3,7 @@ using LogiMarket.Domain.Pedidos;
 
 namespace LogiMarket.Application.Consultas;
 
-// Lado de CONSULTA (CQRS básico): DTO de solo lectura, sin entidades de dominio expuestas a la UI.
+//lado de CONSULTA (CQRS basico): DTO de solo lectura, sin entidades de dominio expuestas a la UI
 
 public sealed record ProductoDto(int Id, string Sku, string Nombre, string Categoria, string Descripcion,
     decimal Precio, decimal PesoKg, int Stock, bool Activo);
@@ -62,7 +62,7 @@ public sealed record IndicadoresDto(
 public sealed record SeguimientoDto(string Codigo, string Cliente, EstadoPedido Estado, string? NumeroGuia,
     string? Etiqueta, DateTime? FechaEstimada, DateTime? FechaEntrega, IReadOnlyList<HistorialEstadoDto> Historial);
 
-/// Puerto de consultas de solo lectura (implementado con AsNoTracking en Infrastructure).
+//puerto de consultas de solo lectura (implementado con AsNoTracking en infrastructure)
 public interface IConsultasOperativas
 {
     Task<IReadOnlyList<ProductoDto>> ListarProductosAsync(string? filtro = null, CancellationToken ct = default);

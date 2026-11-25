@@ -7,7 +7,8 @@ using LogiMarket.Tests.Soporte;
 
 namespace LogiMarket.Tests.Dominio;
 
-/// Builder (P13), Prototype (P14), Memento (P29), State (P31), Strategy (P32), Abstract Factory (P12).
+//builder (P13), prototype (P14), memento (P29), state (P31), strategy (P32)
+//abstract factory (P12)
 public class PedidoDominioTests
 {
     private readonly CatalogoPrueba _c = new();
@@ -53,7 +54,7 @@ public class PedidoDominioTests
         var pedido = new PedidoBuilder().ParaCliente(_c.Ana).AgregarProducto(_c.P03, 10).Construir();
         var v = Valorar(pedido);
         Assert.Equal("MAYORISTA", v.Politica);
-        Assert.Equal(15.00m, v.Descuento); // 15 %, no 25 %
+        Assert.Equal(15.00m, v.Descuento); //15 %, no 25 %
     }
 
     private sealed class PromocionTemporada : IPoliticaDescuento
@@ -70,7 +71,7 @@ public class PedidoDominioTests
         var selector = new SelectorPoliticaDescuento([new Mayorista15Politica(), new PromocionTemporada(),
             new Vip10Politica(), new SinDescuentoPolitica()]);
         var calc = new CalculadoraPedido(selector);
-        var pedido = new PedidoBuilder().ParaCliente(_c.Ana).AgregarProducto(_c.P04, 4).AgregarProducto(_c.P01, 2).Construir(); // 200, 6 uds
+        var pedido = new PedidoBuilder().ParaCliente(_c.Ana).AgregarProducto(_c.P04, 4).AgregarProducto(_c.P01, 2).Construir(); //200, 6 uds
         var v = calc.Valorar(pedido, new FabricaEntregaEstandar());
         Assert.Equal("TEMPORADA", v.Politica);
         Assert.Equal(24.00m, v.Descuento);
@@ -104,7 +105,7 @@ public class PedidoDominioTests
     {
         var p = PedidoAna();
         var f = DateTime.Now;
-        Assert.Throws<ExcepcionDominio>(() => p.Despachar(f, "t"));      // no despacha antes de pagar
+        Assert.Throws<ExcepcionDominio>(() => p.Despachar(f, "t"));      //no despacha antes de pagar
         p.Validar(f, "t");
         Assert.Equal("ESTADO_REPETIDO", Assert.Throws<ExcepcionDominio>(() => p.Validar(f, "t")).Codigo);
         p.AplicarValoracion(Valorar(p));
@@ -148,9 +149,9 @@ public class PedidoDominioTests
         var p = new PedidoBuilder().ParaCliente(_c.Luis).AgregarProducto(_c.P01, 1).Construir();
         var historial = new HistorialEdiciones();
 
-        historial.Capturar(p); p.CambiarCantidad("P01", 2);          // cambio 1
-        historial.Capturar(p); p.AgregarLinea(_c.KitTeletrabajo, 1); // cambio 2 (ítem anidado)
-        historial.Capturar(p); p.CambiarEntrega(TipoEntrega.EXPRES); // cambio 3
+        historial.Capturar(p); p.CambiarCantidad("P01", 2);          //cambio 1
+        historial.Capturar(p); p.AgregarLinea(_c.KitTeletrabajo, 1); //cambio 2 (item anidado)
+        historial.Capturar(p); p.CambiarEntrega(TipoEntrega.EXPRES); //cambio 3
 
         historial.Deshacer(p);
         Assert.Equal(TipoEntrega.ESTANDAR, p.Entrega);

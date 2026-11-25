@@ -10,7 +10,8 @@ using LogiMarket.Domain.Operaciones;
 
 namespace LogiMarket.Application.Comandos;
 
-/// PATRÓN COMMAND — Comando. Encapsula una solicitud con su receptor y su entrada.
+//patron command - comando
+//encapsula una solicitud con su receptor y su entrada
 public interface IComandoOperacion
 {
     string Nombre { get; }
@@ -63,7 +64,7 @@ public sealed class ProcesarDevolucionCommand(ServicioDevoluciones receptor, Sol
     }
 }
 
-/// Crea comandos con sus receptores (la UI no conoce los casos de uso concretos).
+//crea comandos con sus receptores (la UI no conoce los casos de uso concretos)
 public sealed class FabricaComandos(
     ConfirmacionPedidoFacade confirmacion, ServicioPedidos pedidos, ServicioLogistica logistica, ServicioDevoluciones devoluciones)
 {
@@ -76,8 +77,9 @@ public sealed class FabricaComandos(
 
 public sealed record RegistroComando(DateTime Fecha, string Usuario, string Comando, string Entrada, bool Exito, string Resultado);
 
-/// PATRÓN COMMAND — Invocador. Ejecuta cualquier comando y registra comando, entrada y resultado.
-/// La misma acción se dispara desde un botón o desde una prueba sin duplicar lógica.
+//patron command - invocador
+//ejecuta cualquier comando y registra comando, entrada y resultado
+//la misma accion se dispara desde un boton o desde una prueba sin duplicar logica
 public sealed class InvocadorComandos
 {
     private readonly List<RegistroComando> _historial = new();

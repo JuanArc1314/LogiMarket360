@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Vistas;
 
-/// 12. Auditoría y métricas: bitácora persistente, LOG de pagos/seguridad, Outbox, avisos y comandos.
+//12 - auditoria y metricas: bitacora persistente, LOG de pagos/seguridad, outbox, avisos y comandos
 public sealed class AuditoriaView : VistaBase
 {
     private readonly ComboBox _categoria = UiKit.Combo("Categoría de auditoría", 130);

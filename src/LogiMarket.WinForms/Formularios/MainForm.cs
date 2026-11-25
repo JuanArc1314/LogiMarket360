@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Formularios;
 
-/// Ventana principal: cabecera de sesión, navegación lateral y área de contenido.
+//ventana principal: cabecera de sesion, navegacion lateral y area de contenido
 public sealed class MainForm : Form
 {
     private readonly ContextoUi _ui;
@@ -34,7 +34,7 @@ public sealed class MainForm : Form
         AutoScaleMode = AutoScaleMode.Dpi;
         KeyPreview = true;
 
-        // Cabecera
+        //cabecera
         var cabecera = new Panel { Dock = DockStyle.Top, Height = 56, BackColor = Color.White, Padding = new Padding(20, 0, 20, 0) };
         cabecera.Controls.Add(new Label { Text = "LOGIMARKET 360", Font = Estilos.Titulo, ForeColor = Estilos.Texto, AutoSize = true, Location = new Point(18, 12) });
         var sesion = new FlowLayoutPanel { Dock = DockStyle.Right, AutoSize = true, FlowDirection = FlowDirection.LeftToRight, Padding = new Padding(0, 12, 0, 0) };
@@ -42,7 +42,7 @@ public sealed class MainForm : Form
         sesion.Controls.Add(UiKit.Boton("Cerrar &sesión", async (_, _) => await CerrarSesionAsync()));
         cabecera.Controls.Add(sesion);
 
-        // Navegación lateral
+        //navegacion lateral
         _navegacion = new FlowLayoutPanel
         {
             Dock = DockStyle.Left, Width = 220, BackColor = Estilos.Lateral, FlowDirection = FlowDirection.TopDown,
@@ -64,7 +64,7 @@ public sealed class MainForm : Form
         _mediador = ui.Singleton<FormularioPrincipalMediator>();
         _mediador.Notificado += AlNotificarMediador;
 
-        // Procesamiento periódico del Outbox (eventos post-confirmación).
+        //procesamiento periodico del outbox (eventos post-confirmacion)
         _temporizadorOutbox = new System.Windows.Forms.Timer { Interval = Math.Max(5, configuracion.ProcesarOutboxCadaSegundos) * 1000 };
         _temporizadorOutbox.Tick += async (_, _) => await ProcesarOutboxAsync();
         _temporizadorOutbox.Start();
@@ -105,7 +105,7 @@ public sealed class MainForm : Form
         boton.Click += async (_, _) => await MostrarAsync(vista.NombreVista);
         _navegacion.Controls.Add(boton);
         _vistas[vista.NombreVista] = (boton, vista);
-        _ui.Mediador.Registrar(vista); // el mediador conoce a los colegas; los colegas no se conocen entre sí
+        _ui.Mediador.Registrar(vista); //el mediador conoce a los colegas los colegas no se conocen entre si
     }
 
     private async Task MostrarAsync(string nombre)

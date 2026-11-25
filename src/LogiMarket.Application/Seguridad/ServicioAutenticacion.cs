@@ -4,7 +4,7 @@ using LogiMarket.Domain.Operaciones;
 
 namespace LogiMarket.Application.Seguridad;
 
-/// Acceso local: verifica el hash, abre/cierra la sesión y audita los intentos.
+//acceso local: verifica el hash, abre/cierra la sesion y audita los intentos
 public sealed class ServicioAutenticacion
 {
     private readonly IRepositorioUsuarios _usuarios;

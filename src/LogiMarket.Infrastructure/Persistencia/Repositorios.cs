@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LogiMarket.Infrastructure.Persistencia;
 
-// PATRÓN REPOSITORY — Adaptadores EF Core de las interfaces del núcleo.
+//patron repository - adaptadores EF Core de las interfaces del nucleo
 
 internal sealed class RepositorioCatalogoEf(LogiMarketDbContext db) : IRepositorioCatalogo
 {
@@ -54,8 +54,8 @@ internal sealed class RepositorioCatalogoEf(LogiMarketDbContext db) : IRepositor
     public void AgregarProducto(ProductoSimple producto) => db.Productos.Add(producto);
     public void AgregarKit(KitCompuesto kit) => db.Kits.Add(kit);
 
-    /// Carga todos los kits con sus componentes y productos: EF enlaza los sub-kits por identidad,
-    /// de modo que el Composite queda completo a cualquier profundidad.
+    //carga todos los kits con sus componentes y productos: EF enlaza los sub-kits por identidad
+    //de modo que el composite queda completo a cualquier profundidad
     private Task CargarGrafoKitsAsync(CancellationToken ct) =>
         db.Kits.Include(k => k.Componentes).ThenInclude(c => c.Producto).LoadAsync(ct);
 }

@@ -2,7 +2,7 @@ using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Domain.Eventos;
 
-/// Evento de negocio publicado después de confirmar la transacción (vía Outbox).
+//evento de negocio publicado despues de confirmar la transaccion (via outbox)
 public interface IEventoNegocio
 {
     Guid Id { get; }
@@ -43,8 +43,9 @@ public sealed record DevolucionAceptada(
         $"Devolución de {CodigoPedido} ({Motivo}) aceptada; reembolso {Dinero.Formatear(MontoReembolso)} (ref. {ReferenciaReembolso}).";
 }
 
-/// Evento pendiente (patrón Outbox). Se inserta en la MISMA transacción que la operación de negocio
-/// y se procesa después; registra intentos y errores para su recuperación.
+//evento pendiente (patron outbox)
+//se inserta en la misma transaccion que la operacion de negocio y se procesa despues
+//registra intentos y errores para su recuperacion
 public sealed class EventoOutbox
 {
     private EventoOutbox() { }

@@ -8,8 +8,9 @@ using LogiMarket.Domain.Operaciones;
 
 namespace LogiMarket.Application.Logistica;
 
-/// Despacho y entrega (BODEGA/ADMIN). La guía, el plazo y la etiqueta provienen de la fábrica abstracta
-/// de la familia del pedido (ESTÁNDAR/EXPRÉS) sin condicionales en el caso de uso.
+//despacho y entrega (BODEGA/ADMIN)
+//la guia, el plazo y la etiqueta provienen de la fabrica abstracta de la familia del pedido
+//(estandar/expres) sin condicionales en el caso de uso
 public sealed class ServicioLogistica
 {
     private readonly IUnidadDeTrabajo _unidad;
@@ -44,7 +45,7 @@ public sealed class ServicioLogistica
         {
             var pedido = await _pedidos.ObtenerAsync(pedidoId, t) ?? throw new RecursoNoEncontradoException("Pedido", pedidoId);
             var ahora = _reloj.Ahora;
-            pedido.Despachar(ahora, usuario.NombreUsuario); // State: solo desde PAGADO
+            pedido.Despachar(ahora, usuario.NombreUsuario); //state: solo desde PAGADO
 
             var fabrica = _fabricas.Para(pedido.Entrega);
             var generada = fabrica.CrearGeneradorGuia()
@@ -67,7 +68,7 @@ public sealed class ServicioLogistica
         {
             var pedido = await _pedidos.ObtenerAsync(pedidoId, t) ?? throw new RecursoNoEncontradoException("Pedido", pedidoId);
             var ahora = _reloj.Ahora;
-            pedido.Entregar(ahora, usuario.NombreUsuario); // State: solo desde DESPACHADO
+            pedido.Entregar(ahora, usuario.NombreUsuario); //state: solo desde DESPACHADO
             var despacho = await _despachos.ObtenerPorPedidoAsync(pedidoId, t)
                            ?? throw new ExcepcionAplicacion("SIN_DESPACHO", "El pedido no tiene despacho registrado.");
             despacho.RegistrarEntrega(ahora);

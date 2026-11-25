@@ -1,6 +1,6 @@
 namespace LogiMarket.Domain.Comun;
 
-/// >Validaciones de entrada reutilizables por las entidades (evita validaciones dispersas).
+//validaciones de entrada reutilizables por las entidades (evita validaciones dispersas)
 internal static class Guardia
 {
     public static string Texto(string? valor, string campo, int max = 120)

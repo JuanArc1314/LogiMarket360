@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Formularios;
 
-/// 01. Acceso: identificación local, credenciales (verificadas con hash) y perfil.
+//01 - acceso: identificacion local, credenciales (verificadas con hash) y perfil
 public sealed class LoginForm : Form
 {
     private readonly ContextoUi _ui;

@@ -7,9 +7,11 @@ public sealed record InstantaneaMetricas(
     int Despachos, int Devoluciones, decimal MontoReembolsado, int ComandosEjecutados, int ComandosFallidos,
     int EventosContabilizados);
 
-/// PATRÓN SINGLETON — registrado como ÚNICA instancia en el contenedor DI (AddSingleton) y compartido
-/// por varias pantallas. Contadores de la sesión con sincronización segura (lock). La base de datos
-/// sigue siendo la fuente de verdad; estos valores son indicadores de la sesión en curso.
+//patron singleton - registrado como unica instancia en el contenedor DI (AddSingleton) y
+//compartido por varias pantallas
+//contadores de la sesion con sincronizacion segura (lock)
+//la base de datos sigue siendo la fuente de verdad
+//estos valores son indicadores de la sesion en curso
 public sealed class MetricasSesion
 {
     private readonly object _candado = new();
@@ -22,7 +24,7 @@ public sealed class MetricasSesion
 
     public event EventHandler? Cambiaron;
 
-    /// Contabiliza un evento una sola vez (idempotente ante reprocesos del Outbox).
+    //contabiliza un evento una sola vez (idempotente ante reprocesos del outbox)
     public bool RegistrarEvento(IEventoNegocio evento)
     {
         lock (_candado)

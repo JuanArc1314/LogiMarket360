@@ -10,7 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Vistas;
 
-/// 09. Devoluciones: validación de política por motivo (Template Method), reintegro y reembolso único.</summary>
+//09 - devoluciones: validacion de politica por motivo (template method)
+//reintegro y reembolso unico
 public sealed class DevolucionesView : VistaBase
 {
     private readonly DataGridView _entregados = UiKit.Grid("Pedidos entregados");

@@ -23,15 +23,15 @@ public sealed record ConfiguracionApp(string DirectorioDatos, string NombreBaseD
         : Path.Combine(AppContext.BaseDirectory, DirectorioDatos);
 }
 
-/// Único lugar donde WinForms conoce Infrastructure: solo para registrar dependencias.
-/// Los formularios reciben casos de uso de Application a través de <see cref="ContextoUi"/>.
+//unico lugar donde WinForms conoce infrastructure: solo para registrar dependencias
+//los formularios reciben casos de uso de application a traves de ContextoUi
 public static class CompositionRoot
 {
     public static ServiceProvider Construir(ConfiguracionApp configuracion)
     {
         var servicios = new ServiceCollection();
 
-        // Implementaciones propias de la presentación (se registran antes para prevalecer).
+        //implementaciones propias de la presentacion (se registran antes para prevalecer)
         servicios.AddSingleton<IVisorDocumentos, VisorDocumentosWinForms>();
         servicios.AddSingleton<FormularioPrincipalMediator>();
         servicios.AddSingleton<IMediadorVistas>(sp => sp.GetRequiredService<FormularioPrincipalMediator>());

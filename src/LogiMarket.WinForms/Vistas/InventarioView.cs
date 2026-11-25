@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Vistas;
 
-/// 10. Inventario y movimientos: existencias, alertas y registros trazables (+/−, motivo, referencia).
+//10 - inventario y movimientos: existencias, alertas y registros trazables (+/−, motivo, referencia)
 public sealed class InventarioView : VistaBase
 {
     private readonly DataGridView _existencias = UiKit.Grid("Existencias");
@@ -24,7 +24,7 @@ public sealed class InventarioView : VistaBase
         _existencias.CellFormatting += (_, e) =>
         {
             if (_existencias.Rows[e.RowIndex].DataBoundItem is ProductoDto { Stock: <= 3 } && e.CellStyle is not null)
-                e.CellStyle.ForeColor = Estilos.Aviso; // alerta visual de stock bajo
+                e.CellStyle.ForeColor = Estilos.Aviso; //alerta visual de stock bajo
         };
         _existencias.SelectionChanged += (_, _) => { if (_existencias.Seleccion<ProductoDto>() is { } p) _nuevoStock.Value = p.Stock; };
         _movimientos.Columna(nameof(MovimientoDto.Fecha), "Fecha", 80, "dd/MM/yyyy HH:mm").Columna(nameof(MovimientoDto.Sku), "SKU", 40)

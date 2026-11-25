@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace LogiMarket.Domain.Comun;
 
-// Regla única de redondeo monetario (DRY): decimal, 2 decimales, MidpointRounding.AwayFromZero.
+//regla unica de redondeo monetario (DRY): decimal, 2 decimales, MidpointRounding.AwayFromZero
 public static class Dinero
 {
     private static readonly CultureInfo Formato = CultureInfo.InvariantCulture;

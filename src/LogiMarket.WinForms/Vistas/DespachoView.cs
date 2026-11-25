@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Vistas;
 
-/// 08. Despacho y entrega: gestión logística y transición de estados autorizada (BODEGA/ADMIN).
+//08 - despacho y entrega: gestion logistica y transicion de estados autorizada (BODEGA/ADMIN)
 public sealed class DespachoView : VistaBase
 {
     private readonly DataGridView _pendientes = UiKit.Grid("Pedidos para despacho o entrega");

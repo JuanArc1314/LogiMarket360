@@ -2,8 +2,9 @@ using LogiMarket.Application.Coordinacion;
 
 namespace LogiMarket.WinForms.Comun;
 
-/// Vista base de cada pantalla. Es COLEGA del Mediator: tras una operación notifica al mediador
-/// (nunca llama a otra vista) y el mediador decide qué vistas se refrescan.
+//vista base de cada pantalla
+//es colega del mediator: tras una operacion notifica al mediador (nunca llama a otra vista) y
+//el mediador decide que vistas se refrescan
 public abstract class VistaBase : UserControl, IVistaColaboradora
 {
     private readonly Label _estado;
@@ -37,10 +38,11 @@ public abstract class VistaBase : UserControl, IVistaColaboradora
 
     public abstract string NombreVista { get; }
 
-    /// Recarga datos desde Application (lo invoca el mediador o la navegación).
+    //recarga datos desde application (lo invoca el mediador o la navegacion)
     public abstract Task RefrescarAsync();
 
-    /// Habilita/deshabilita controles según el rol (solo UX; la regla real está en Application).
+    //habilita/deshabilita controles segun el rol (solo ux
+    //la regla real esta en application)
     public virtual void AplicarPermisos() { }
 
     public async Task MostrarAsync()
@@ -57,7 +59,7 @@ public abstract class VistaBase : UserControl, IVistaColaboradora
     protected void MostrarError(string mensaje) { _estado.ForeColor = Estilos.Error; _estado.Text = "✖ " + mensaje.Replace('\n', ' '); }
     protected void MostrarInfo(string mensaje) { _estado.ForeColor = Estilos.TextoSuave; _estado.Text = mensaje; }
 
-    /// Ejecuta una acción de la UI mostrando errores de negocio de forma clara.
+    //ejecuta una accion de la UI mostrando errores de negocio de forma clara
     protected async Task IntentarAsync(Func<Task> accion)
     {
         UseWaitCursor = true;
@@ -77,7 +79,7 @@ public abstract class VistaBase : UserControl, IVistaColaboradora
         }
     }
 
-    /// Muestra el resultado de una operación/comando en la barra de estado.
+    //muestra el resultado de una operacion/comando en la barra de estado
     protected void Informar(Application.Comun.ResultadoOperacion resultado)
     {
         if (resultado.Exito) MostrarExito(resultado.Mensaje);

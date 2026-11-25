@@ -6,8 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.WinForms.Vistas;
 
-/// 11. Reportes y comprobantes: filtro interpretado (Interpreter), comprobante × medio (Bridge)
-/// y demostración de 1.000 filas con metadatos compartidos (Flyweight).
+//11 - reportes y comprobantes: filtro interpretado (interpreter)
+//comprobante x medio (bridge) y demostracion de 1.000 filas con metadatos compartidos (flyweight)
 public sealed class ReportesView : VistaBase
 {
     private readonly TextBox _filtro = UiKit.Texto("Filtro de pedidos", 420);

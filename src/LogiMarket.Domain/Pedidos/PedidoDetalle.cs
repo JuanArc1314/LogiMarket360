@@ -3,13 +3,14 @@ using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Domain.Pedidos;
 
-/// Línea de venta con INSTANTÁNEA de precio y composición (los cambios posteriores del catálogo
-/// no alteran el pedido). Un producto simple se guarda como una línea con un único componente.
+//linea de venta con instantanea de precio y composicion (los cambios posteriores del catalogo
+//no alteran el pedido)
+//un producto simple se guarda como una linea con un unico componente
 public sealed class PedidoDetalle
 {
     private readonly List<PedidoDetalleComponente> _componentes = new();
 
-    private PedidoDetalle() { } // EF Core
+    private PedidoDetalle() { } //EF Core
 
     internal static PedidoDetalle DesdeCatalogo(IElementoCatalogo elemento, int cantidad)
     {
@@ -22,7 +23,7 @@ public sealed class PedidoDetalle
             PesoUnitarioKg = elemento.PesoKg,
             Cantidad = Guardia.CantidadPositiva(cantidad)
         };
-        // Iterator: se expande hasta SKU finales y se congela la composición por unidad de la línea.
+        //iterator: se expande hasta SKU finales y se congela la composicion por unidad de la linea
         foreach (var fisico in ExpansionCatalogo.ExpandirAgregado(elemento))
             detalle._componentes.Add(new PedidoDetalleComponente(
                 fisico.Producto.Sku, fisico.Producto.Nombre, fisico.Cantidad,
@@ -41,7 +42,7 @@ public sealed class PedidoDetalle
     public int Cantidad { get; private set; }
     public decimal Subtotal { get; private set; }
 
-    /// Composición física por UNA unidad de la línea.
+    //composicion fisica por una unidad de la linea
     public IReadOnlyList<PedidoDetalleComponente> Componentes => _componentes.AsReadOnly();
 
     public int UnidadesFisicas => _componentes.Sum(c => c.CantidadPorUnidad) * Cantidad;
@@ -54,7 +55,7 @@ public sealed class PedidoDetalle
 
     internal void Incrementar(int cantidad) => CambiarCantidad(Cantidad + Guardia.CantidadPositiva(cantidad));
 
-    /// Copia profunda (Prototype / Memento): colecciones nuevas, sin identificadores persistidos.
+    //copia profunda (prototype / memento): colecciones nuevas, sin identificadores persistidos
     internal PedidoDetalle ClonarProfundo()
     {
         var copia = new PedidoDetalle
@@ -75,10 +76,10 @@ public sealed class PedidoDetalle
     private void ActualizarSubtotal() => Subtotal = Dinero.Redondear(PrecioUnitario * Cantidad);
 }
 
-/// Instantánea de un SKU final dentro de una línea (precio y peso al momento del registro).
+//instantanea de un SKU final dentro de una linea (precio y peso al momento del registro)
 public sealed class PedidoDetalleComponente
 {
-    private PedidoDetalleComponente() { } // EF Core
+    private PedidoDetalleComponente() { } //EF Core
 
     internal PedidoDetalleComponente(string sku, string nombre, int cantidadPorUnidad, decimal precioUnitario, decimal pesoKg)
     {
@@ -101,10 +102,10 @@ public sealed class PedidoDetalleComponente
         new(Sku, Nombre, CantidadPorUnidad, PrecioUnitario, PesoKg);
 }
 
-/// Registro inmutable de cada transición de estado (trazabilidad).
+//registro inmutable de cada transicion de estado (trazabilidad)
 public sealed class PedidoHistorialEstado
 {
-    private PedidoHistorialEstado() { } // EF Core
+    private PedidoHistorialEstado() { } //EF Core
 
     internal PedidoHistorialEstado(EstadoPedido? anterior, EstadoPedido nuevo, DateTime fecha, string usuario, string nota)
     {

@@ -31,25 +31,26 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace LogiMarket.Infrastructure;
 
-/// Registro de dependencias de Application + Infrastructure. Lo invoca el composition root
-/// (WinForms/Program) y las pruebas de integración. Todas las dependencias entran por constructor (DIP).
+//registro de dependencias de application + infrastructure
+//lo invoca el composition root (WinForms/program) y las pruebas de integracion
+//todas las dependencias entran por constructor (DIP)
 public static class RegistroDependencias
 {
     public static IServiceCollection AgregarLogiMarket(this IServiceCollection services, OpcionesInfraestructura opciones)
     {
-        // ---------- Singletons (estado de la sesión de escritorio) ----------
+        //singletons (estado de la sesion de escritorio)
         services.AddSingleton(opciones);
         services.AddSingleton<ConfiguracionDemostracion>();
         services.AddSingleton<IReloj, RelojSistema>();
         services.AddSingleton<ISesionUsuario, SesionUsuario>();
         services.AddSingleton<IBitacoraOperativa, BitacoraOperativaArchivo>();
-        services.AddSingleton<MetricasSesion>();                  // PATRÓN SINGLETON (única instancia en DI)
+        services.AddSingleton<MetricasSesion>();                  //patron singleton (unica instancia en DI)
         services.AddSingleton<InvocadorComandos>();
         services.AddSingleton<IHasherContrasenas, HasherPbkdf2>();
         services.AddSingleton<Autorizador>();
         services.TryAddSingleton<IVisorDocumentos, VisorDocumentosMemoria>();
 
-        // Dominio puro: Strategy y Abstract Factory registrados como colecciones (OCP).
+        //dominio puro: strategy y abstract factory registrados como colecciones (OCP)
         services.AddSingleton<IPoliticaDescuento, Mayorista15Politica>();
         services.AddSingleton<IPoliticaDescuento, Vip10Politica>();
         services.AddSingleton<IPoliticaDescuento, SinDescuentoPolitica>();
@@ -62,7 +63,7 @@ public static class RegistroDependencias
         services.AddSingleton<FabricaCadenaValidacion>();
         services.AddSingleton<SerializadorEventos>();
 
-        // ---------- Pagos: Proxy → Decorator → (Conmutador) → Adapter | Alterno ----------
+        //pagos: proxy -> decorator -> (conmutador) -> adapter | alterno
         services.AddSingleton(sp =>
         {
             var configuracion = sp.GetRequiredService<ConfiguracionDemostracion>();
@@ -80,7 +81,7 @@ public static class RegistroDependencias
         });
         services.AddSingleton<IPasarelaReembolso, ServicioReembolsoSimulado>();
 
-        // ---------- Persistencia (scoped: un DbContext por operación) ----------
+        //persistencia (scoped: un DbContext por operacion)
         services.AddDbContext<LogiMarketDbContext>(o => o.UseSqlite(opciones.CadenaConexion));
         services.AddScoped<IUnidadDeTrabajo, UnidadDeTrabajoEf>();
         services.AddScoped<IRepositorioCatalogo, RepositorioCatalogoEf>();
@@ -99,7 +100,7 @@ public static class RegistroDependencias
         services.AddScoped<InicializadorBaseDatos>();
         services.AddScoped<IRestablecedorDatos>(sp => sp.GetRequiredService<InicializadorBaseDatos>());
 
-        // ---------- Notificaciones (Factory Method) y eventos (Observer + Outbox) ----------
+        //notificaciones (factory method) y eventos (observer + outbox)
         services.AddScoped<EntornoNotificacion>();
         services.AddScoped<CreadorNotificador, CreadorNotificadorEmail>();
         services.AddScoped<CreadorNotificador, CreadorNotificadorSms>();
@@ -110,7 +111,7 @@ public static class RegistroDependencias
         services.AddScoped<IPublicadorEventos, PublicadorEventos>();
         services.AddScoped<ProcesadorOutbox>();
 
-        // ---------- Casos de uso ----------
+        //casos de uso
         services.AddScoped<ServicioAuditoria>();
         services.AddScoped<ServicioInventario>();
         services.AddScoped<ServicioAutenticacion>();

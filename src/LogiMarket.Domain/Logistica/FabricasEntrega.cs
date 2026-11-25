@@ -3,10 +3,10 @@ using LogiMarket.Domain.Pedidos;
 
 namespace LogiMarket.Domain.Logistica;
 
-/// Guía de despacho simulada producida por la familia de entrega.
+//guia de despacho simulada producida por la familia de entrega
 public sealed record GuiaDespacho(string Numero, TipoEntrega Familia, string Etiqueta, DateTime FechaEstimada);
 
-// ---------------- Productos abstractos ----------------
+//productos abstractos
 
 public interface ICalculadorTarifa
 {
@@ -27,8 +27,9 @@ public interface IGeneradorGuia
     GuiaDespacho Generar(string codigoPedido, string cliente, decimal pesoKg, DateTime fecha, ICalculadorPlazo plazo);
 }
 
-/// PATRÓN ABSTRACT FACTORY. Cada fábrica produce una familia compatible de objetos
-/// (tarifa, plazo y guía). El caso de uso no cambia al cambiar de familia.
+//patron abstract factory
+//cada fabrica produce una familia compatible de objetos (tarifa, plazo y guia)
+//el caso de uso no cambia al cambiar de familia
 public interface IFabricaEntrega
 {
     TipoEntrega Tipo { get; }
@@ -37,7 +38,7 @@ public interface IFabricaEntrega
     IGeneradorGuia CrearGeneradorGuia();
 }
 
-// ---------------- Base común (DRY) para los productos concretos ----------------
+//base comun (DRY) para los productos concretos
 
 internal abstract class TarifaPlana(TipoEntrega familia, decimal valor) : ICalculadorTarifa
 {
@@ -62,7 +63,7 @@ internal abstract class GeneradorGuiaBase(TipoEntrega familia, string prefijo, s
 
     public GuiaDespacho Generar(string codigoPedido, string cliente, decimal pesoKg, DateTime fecha, ICalculadorPlazo plazo)
     {
-        // Impide mezclar inadvertidamente productos de familias distintas.
+        //impide mezclar inadvertidamente productos de familias distintas
         if (plazo.Familia != Familia)
             throw new ExcepcionDominio("MEZCLA_FAMILIAS",
                 $"La guía {Familia} no puede usar un plazo de la familia {plazo.Familia}.");
@@ -73,7 +74,7 @@ internal abstract class GeneradorGuiaBase(TipoEntrega familia, string prefijo, s
     }
 }
 
-// ---------------- Familia ESTÁNDAR ----------------
+//familia estandar
 
 internal sealed class TarifaEstandar() : TarifaPlana(TipoEntrega.ESTANDAR, 5.00m);
 internal sealed class PlazoEstandar() : PlazoFijo(TipoEntrega.ESTANDAR, 3);
@@ -87,7 +88,7 @@ public sealed class FabricaEntregaEstandar : IFabricaEntrega
     public IGeneradorGuia CrearGeneradorGuia() => new GuiaEstandar();
 }
 
-// ---------------- Familia EXPRÉS ----------------
+//familia expres
 
 internal sealed class TarifaExpres() : TarifaPlana(TipoEntrega.EXPRES, 12.00m);
 internal sealed class PlazoExpres() : PlazoFijo(TipoEntrega.EXPRES, 1);

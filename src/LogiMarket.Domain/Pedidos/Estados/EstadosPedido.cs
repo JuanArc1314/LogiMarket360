@@ -2,15 +2,18 @@ using LogiMarket.Domain.Comun;
 
 namespace LogiMarket.Domain.Pedidos.Estados;
 
-/// PATRÓN STATE — Estado abstracto. Por defecto toda acción es inválida; cada estado concreto
-/// sobrescribe únicamente las acciones que admite. No existe un switch central de transiciones.
+//patron state - estado abstracto
+//por defecto toda accion es invalida
+//cada estado concreto sobrescribe unicamente las acciones que admite
+//no existe un switch central de transiciones
 public abstract class EstadoPedidoBase
 {
     public abstract EstadoPedido Codigo { get; }
 
     public virtual bool PermiteEdicion => false;
 
-    /// Acciones válidas (para habilitar controles; la regla real está en los métodos).
+    //acciones validas (para habilitar controles
+    //la regla real esta en los metodos)
     public abstract IReadOnlyList<string> AccionesPermitidas { get; }
 
     public void ExigirEdicion()
@@ -113,7 +116,7 @@ public sealed class EstadoCancelado : EstadoPedidoBase
     public override IReadOnlyList<string> AccionesPermitidas { get; } = [];
 }
 
-/// Registro de instancias de estado (sin estado propio, compartidas).
+//registro de instancias de estado (sin estado propio, compartidas)
 public static class EstadosPedido
 {
     private static readonly IReadOnlyDictionary<EstadoPedido, EstadoPedidoBase> Instancias =

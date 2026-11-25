@@ -15,15 +15,15 @@ public sealed record EntradaBitacora(
         $"{Fecha:HH:mm:ss.fff} [{Categoria}/{Etapa}] {(Correlacion is null ? "" : $"#{Correlacion} ")}{Mensaje} ({Usuario})";
 }
 
-/// Bitácora operativa (LOG) independiente de la transacción de negocio: los registros de un cobro
-/// fallido o denegado se conservan aunque la transacción se revierta.
+//bitacora operativa (LOG) independiente de la transaccion de negocio: los registros de un cobro
+//fallido o denegado se conservan aunque la transaccion se revierta
 public interface IBitacoraOperativa
 {
     void Registrar(string categoria, string etapa, string mensaje, string? correlacion = null);
     IReadOnlyList<EntradaBitacora> Consultar(string? categoria = null, string? correlacion = null);
 }
 
-/// Identificador de correlación que fluye por las llamadas asíncronas (Decorator → Adapter).
+//identificador de correlacion que fluye por las llamadas asincronas (decorator -> adapter)
 public static class ContextoCorrelacion
 {
     private static readonly AsyncLocal<string?> Valor = new();

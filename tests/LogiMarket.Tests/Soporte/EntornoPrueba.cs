@@ -12,15 +12,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.Tests.Soporte;
 
-/// Reloj controlable para reproducir plazos (día 20, día 10...).
+//reloj controlable para reproducir plazos (dia 20, dia 10...)
 public sealed class RelojControlado : IReloj
 {
     public DateTime Ahora { get; set; } = new(2026, 11, 18, 10, 0, 0);
     public void AvanzarDias(int dias) => Ahora = Ahora.AddDays(dias);
 }
 
-/// Base SQLite AISLADA por prueba (archivo temporal), creada con migraciones + seed.
-/// Cada operación usa un ámbito DI nuevo, igual que la aplicación de escritorio.
+//base SQLite aislada por prueba (archivo temporal), creada con migraciones + seed
+//cada operacion usa un ambito DI nuevo, igual que la aplicacion de escritorio
 public sealed class EntornoPrueba : IAsyncDisposable
 {
     private EntornoPrueba(string directorio, ServiceProvider proveedor, RelojControlado reloj)
@@ -44,7 +44,7 @@ public sealed class EntornoPrueba : IAsyncDisposable
         var reloj = new RelojControlado();
         var servicios = new ServiceCollection();
         servicios.AgregarLogiMarket(new OpcionesInfraestructura(directorio) { IteracionesHash = 1_000 });
-        servicios.AddSingleton<IReloj>(reloj); // reemplaza el reloj del sistema
+        servicios.AddSingleton<IReloj>(reloj); //reemplaza el reloj del sistema
         configurar?.Invoke(servicios);
         var proveedor = servicios.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true });
 
@@ -71,7 +71,7 @@ public sealed class EntornoPrueba : IAsyncDisposable
         return await accion(ambito.ServiceProvider);
     }
 
-    // ---------------- Ayudantes de escenario ----------------
+    //ayudantes de escenario
 
     public Task<int> ClienteIdAsync(string nombre) => EnAmbitoAsync(async sp =>
         (await sp.GetRequiredService<IConsultasOperativas>().ListarClientesAsync(nombre)).Single().Id);

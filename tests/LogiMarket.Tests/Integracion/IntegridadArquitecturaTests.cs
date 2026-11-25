@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.Tests.Integracion;
 
-/// Integridad, recuperación y arquitectura P35–P38.
+//integridad, recuperacion y arquitectura P35-P38
 public class IntegridadArquitecturaTests
 {
     [Fact(DisplayName = "P35 Devolución DEFECTO de Ana: reembolso 54.00 sin flete; repetir no reintegra ni reembolsa otra vez")]
@@ -30,7 +30,7 @@ public class IntegridadArquitecturaTests
         Assert.False(segunda.Aceptada);
         Assert.Equal("YA_DEVUELTO", segunda.Codigo);
         var s = await e.StocksAsync();
-        Assert.Equal((8, 5, 20), (s["P01"], s["P02"], s["P03"])); // reintegrado UNA vez
+        Assert.Equal((8, 5, 20), (s["P01"], s["P02"], s["P03"])); //reintegrado una vez
         Assert.Equal(1, await e.ContarAsync(db => db.Devoluciones.Count()));
         Assert.Equal(3, await e.ContarAsync(db => db.MovimientosInventario.Count(m => m.Tipo == TipoMovimiento.DEVOLUCION)));
         Assert.True((await e.PedidoAsync(id)).Devuelto);
@@ -72,7 +72,7 @@ public class IntegridadArquitecturaTests
         Assert.Contains("no disponible", pendiente.UltimoError);
         Assert.Equal(0, await e.ContarAsync(db => db.Notificaciones.Count() + db.Auditorias.Count(a => a.Accion.StartsWith("EVENTO_"))));
 
-        config.ConfigurarFalloNotificador(false); // "reiniciar procesador"
+        config.ConfigurarFalloNotificador(false); //"reiniciar procesador"
         var recuperado = await e.EnAmbitoAsync(sp => sp.GetRequiredService<ProcesadorOutbox>().ProcesarPendientesAsync());
         var otraVez = await e.EnAmbitoAsync(sp => sp.GetRequiredService<ProcesadorOutbox>().ProcesarPendientesAsync());
 
@@ -82,7 +82,7 @@ public class IntegridadArquitecturaTests
         Assert.NotNull(procesado.FechaProcesado);
         Assert.Equal(2, procesado.Intentos);
         Assert.Equal(1, await e.ContarAsync(db => db.Notificaciones.Count()));
-        Assert.Equal(1, await e.ContarAsync(db => db.Pagos.Count()));          // sin cobro duplicado
+        Assert.Equal(1, await e.ContarAsync(db => db.Pagos.Count()));          //sin cobro duplicado
         Assert.Equal(1, e.Servicio<Application.Metricas.MetricasSesion>().Instantanea().PedidosPagados);
     }
 
@@ -105,7 +105,7 @@ public class IntegridadArquitecturaTests
         foreach (var pasarela in implementaciones)
         {
             var rechazo = await pasarela.CobrarAsync(10.00m, $"LSP-R-{pasarela.Nombre}");
-            Assert.False(rechazo.Aprobado);         // rechazo de negocio: se devuelve, no se lanza
+            Assert.False(rechazo.Aprobado);         //rechazo de negocio: se devuelve, no se lanza
             Assert.Null(rechazo.Referencia);
             Assert.False(string.IsNullOrWhiteSpace(rechazo.Motivo));
         }
@@ -114,12 +114,12 @@ public class IntegridadArquitecturaTests
     [Fact(DisplayName = "P38 ISP: interfaces pequeñas; el legado no implementa reembolso; DIP: dependencias por constructor")]
     public void P38_IspYDip()
     {
-        Assert.Single(typeof(IPasarelaPago).GetMethods().Where(m => !m.IsSpecialName)); // una operación (+ propiedad Nombre)
+        Assert.Single(typeof(IPasarelaPago).GetMethods().Where(m => !m.IsSpecialName)); //una operacion (+ propiedad nombre)
         Assert.Single(typeof(IPasarelaReembolso).GetMethods().Where(m => !m.IsSpecialName));
         Assert.False(typeof(IPasarelaReembolso).IsAssignableFrom(typeof(PasarelaLegadaAdapter)));
         Assert.False(typeof(IPasarelaReembolso).IsAssignableFrom(typeof(PasarelaAlternaSimulada)));
 
-        // Los casos de uso dependen de abstracciones (puertos), no de repositorios EF concretos.
+        //los casos de uso dependen de abstracciones (puertos), no de repositorios EF concretos
         var casosDeUso = typeof(Application.Confirmacion.ConfirmacionPedidoFacade).Assembly.GetTypes()
             .Where(t => t.Name.StartsWith("Servicio") || t.Name.EndsWith("Facade"));
         foreach (var tipo in casosDeUso)

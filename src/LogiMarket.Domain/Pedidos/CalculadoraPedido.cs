@@ -3,8 +3,10 @@ using LogiMarket.Domain.Promociones;
 
 namespace LogiMarket.Domain.Pedidos;
 
-/// Calculadora pura: subtotal = Σ(precio × cantidad); descuento = redondear(subtotal × tasa, 2);
-/// total = subtotal − descuento + tarifa. Usa la interfaz de estrategia y la fábrica de la familia.
+//calculadora pura: subtotal = Σ(precio x cantidad)
+//descuento = redondear(subtotal x tasa, 2)
+//total = subtotal − descuento + tarifa
+//usa la interfaz de estrategia y la fabrica de la familia
 public sealed class CalculadoraPedido
 {
     private readonly SelectorPoliticaDescuento _selector;

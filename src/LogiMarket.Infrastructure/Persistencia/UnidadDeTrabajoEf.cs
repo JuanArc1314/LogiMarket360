@@ -5,8 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LogiMarket.Infrastructure.Persistencia;
 
-/// UNIT OF WORK real: DbContext + transacción SQLite (BEGIN IMMEDIATE, serializa escrituras).
-/// Traduce excepciones de EF/SQLite a excepciones de la aplicación (la capa interna no conoce EF).
+//unit of work real: DbContext + transaccion SQLite (begin immediate, serializa escrituras)
+//traduce excepciones de EF/SQLite a excepciones de la aplicacion (la capa interna no conoce EF)
 internal sealed class UnidadDeTrabajoEf : IUnidadDeTrabajo
 {
     private readonly LogiMarketDbContext _contexto;
@@ -16,7 +16,7 @@ internal sealed class UnidadDeTrabajoEf : IUnidadDeTrabajo
     public async Task<T> EjecutarEnTransaccionAsync<T>(Func<CancellationToken, Task<T>> operacion, CancellationToken ct = default)
     {
         if (_contexto.Database.CurrentTransaction is not null)
-            return await operacion(ct); // se une a la transacción en curso
+            return await operacion(ct); //se une a la transaccion en curso
 
         await using var transaccion = await _contexto.Database.BeginTransactionAsync(ct);
         try
@@ -28,7 +28,7 @@ internal sealed class UnidadDeTrabajoEf : IUnidadDeTrabajo
         }
         catch (Exception ex)
         {
-            try { await transaccion.RollbackAsync(CancellationToken.None); } catch { /* conexión ya revertida */ }
+            try { await transaccion.RollbackAsync(CancellationToken.None); } catch { /* conexion ya revertida */ }
             _contexto.ChangeTracker.Clear();
             var traducida = Traducir(ex);
             if (traducida is null) throw;

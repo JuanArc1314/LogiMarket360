@@ -16,7 +16,7 @@ public sealed record ComponenteKitDto(string Sku, int Cantidad);
 public sealed record DesgloseKitDto(string Sku, string Nombre, decimal Precio, decimal PesoTotalKg,
     IReadOnlyList<LineaDesglose> Lineas, IReadOnlyList<string> Traza);
 
-/// Casos de uso del catálogo: CRUD de productos, kits (Composite) y ajustes de inventario.
+//casos de uso del catalogo: CRUD de productos, kits (composite) y ajustes de inventario
 public sealed class ServicioCatalogo
 {
     private readonly IRepositorioCatalogo _catalogo;
@@ -53,7 +53,8 @@ public sealed class ServicioCatalogo
         return ResultadoOperacion.Ok($"Producto {dto.Sku.ToUpperInvariant()} creado.");
     }
 
-    ///Actualiza datos descriptivos y precio. Los pedidos ya registrados conservan su instantánea.
+    //actualiza datos descriptivos y precio
+    //los pedidos ya registrados conservan su instantanea
     public async Task<ResultadoOperacion> ActualizarProductoAsync(ProductoEdicionDto dto, CancellationToken ct = default)
     {
         _autorizador.Exigir(Permiso.GestionarCatalogo);
@@ -112,7 +113,8 @@ public sealed class ServicioCatalogo
         return ResultadoOperacion.Ok($"Kit {sku.ToUpperInvariant()} creado.");
     }
 
-    /// >Agrega un componente a un kit existente; rechaza referencias circulares (KIT_CICLICO).
+    //agrega un componente a un kit existente
+    //rechaza referencias circulares (KIT_CICLICO)
     public async Task<ResultadoOperacion> AgregarComponenteAsync(string kitSku, string componenteSku, int cantidad, CancellationToken ct = default)
     {
         _autorizador.Exigir(Permiso.GestionarCatalogo);
@@ -137,7 +139,7 @@ public sealed class ServicioCatalogo
         return ResultadoOperacion.Ok($"{componenteSku} retirado de {kitSku}.");
     }
 
-    /// VISITOR: desglose físico por SKU y peso logístico de un producto o kit.
+    //visitor: desglose fisico por SKU y peso logistico de un producto o kit
     public async Task<DesgloseKitDto> DesglosarAsync(string sku, CancellationToken ct = default)
     {
         _autorizador.Exigir(Permiso.ConsultarInformacion);

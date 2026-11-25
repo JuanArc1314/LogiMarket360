@@ -16,13 +16,13 @@ public sealed class ErrorSintaxisFiltro : ExcepcionAplicacion
     public int Posicion { get; }
 }
 
-/// Expresión abstracta del intérprete.
+//expresion abstracta del interprete
 public interface IExpresionPedido
 {
     bool Interpretar(PedidoResumenDto pedido);
 }
 
-// ---------------- Expresiones terminales ----------------
+//expresiones terminales
 
 public sealed class ExpresionEstado(EstadoPedido estado) : IExpresionPedido
 {
@@ -53,7 +53,7 @@ public sealed class ExpresionCliente(string texto) : IExpresionPedido
     public override string ToString() => $"CLIENTE = \"{texto}\"";
 }
 
-// ---------------- Expresiones no terminales ----------------
+//expresiones no terminales
 
 public sealed class ExpresionY(IExpresionPedido izquierda, IExpresionPedido derecha) : IExpresionPedido
 {
@@ -67,7 +67,7 @@ public sealed class ExpresionO(IExpresionPedido izquierda, IExpresionPedido dere
     public override string ToString() => $"({izquierda} OR {derecha})";
 }
 
-// ---------------- Análisis léxico ----------------
+//analisis lexico
 
 internal enum TipoToken { Palabra, Numero, Texto, Operador, AbreParentesis, CierraParentesis, Fin }
 
@@ -128,7 +128,7 @@ internal static class AnalizadorLexico
     }
 }
 
-// ---------------- Análisis sintáctico (descendente recursivo) ----------------
+//analisis sintactico (descendente recursivo)
 
 public sealed class ParserFiltroPedidos
 {

@@ -1,6 +1,6 @@
 namespace LogiMarket.Application.Coordinacion;
 
-/// Eventos que una vista comunica al mediador después de una operación.
+//eventos que una vista comunica al mediador despues de una operacion
 public enum EventoVista
 {
     SesionIniciada,
@@ -17,14 +17,15 @@ public enum EventoVista
     DatosRestablecidos
 }
 
-/// PATRÓN MEDIATOR — Colega: una vista que puede refrescarse cuando el mediador lo indique.
+//patron mediator - colega: una vista que puede refrescarse cuando el mediador lo indique
 public interface IVistaColaboradora
 {
     string NombreVista { get; }
     Task RefrescarAsync();
 }
 
-/// PATRÓN MEDIATOR — Mediador: las vistas no se llaman entre sí; solo notifican al mediador.
+//patron mediator - mediador: las vistas no se llaman entre si
+//solo notifican al mediador
 public interface IMediadorVistas
 {
     void Registrar(IVistaColaboradora vista);
@@ -32,10 +33,9 @@ public interface IMediadorVistas
     IReadOnlyList<string> UltimasVistasRefrescadas { get; }
 }
 
-/// 
-/// Mediador concreto con una tabla de rutas evento → vistas a refrescar. El formulario principal
-/// (WinForms) lo especializa con sus nombres de vista; las pruebas lo usan con vistas dobles.
-/// 
+//mediador concreto con una tabla de rutas evento -> vistas a refrescar
+//el formulario principal (WinForms) lo especializa con sus nombres de vista
+//las pruebas lo usan con vistas dobles
 public class MediadorVistas : IMediadorVistas
 {
     private readonly Dictionary<string, IVistaColaboradora> _vistas = new(StringComparer.OrdinalIgnoreCase);
@@ -66,7 +66,7 @@ public class MediadorVistas : IMediadorVistas
                 }
                 catch (Exception ex)
                 {
-                    fallidas.Add($"{nombre} ({ex.Message})"); // una vista con error no bloquea a las demás
+                    fallidas.Add($"{nombre} ({ex.Message})"); //una vista con error no bloquea a las demas
                 }
             }
         }

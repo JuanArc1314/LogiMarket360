@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LogiMarket.Infrastructure.Persistencia;
 
-// Mapeo relacional: PK/FK reales, índices de búsqueda, unicidad y restricciones CHECK.
+//mapeo relacional: PK/FK reales, indices de busqueda, unicidad y restricciones CHECK
 
 internal sealed class UsuarioConfig : IEntityTypeConfiguration<Usuario>
 {
@@ -190,11 +190,11 @@ internal sealed class PagoConfig : IEntityTypeConfiguration<Pago>
         b.ToTable("Pagos", t => t.HasCheckConstraint("CK_Pago_Monto", "CAST(\"Monto\" AS REAL) > 0"));
         b.HasKey(x => x.Id);
         b.HasOne<Pedido>().WithMany().HasForeignKey(x => x.PedidoId).OnDelete(DeleteBehavior.Restrict);
-        b.HasIndex(x => x.PedidoId).IsUnique();               // un cobro aprobado por pedido
+        b.HasIndex(x => x.PedidoId).IsUnique();               //un cobro aprobado por pedido
         b.Property(x => x.Referencia).HasMaxLength(60).IsRequired();
-        b.HasIndex(x => x.Referencia).IsUnique();             // referencia de cobro única
+        b.HasIndex(x => x.Referencia).IsUnique();             //referencia de cobro unica
         b.Property(x => x.ClaveIdempotencia).HasMaxLength(80).IsRequired();
-        b.HasIndex(x => x.ClaveIdempotencia).IsUnique();      // clave de idempotencia única
+        b.HasIndex(x => x.ClaveIdempotencia).IsUnique();      //clave de idempotencia unica
         b.Property(x => x.Monto).HasPrecision(12, 2);
         b.Property(x => x.Proveedor).HasMaxLength(40);
         b.Property(x => x.Usuario).HasMaxLength(40);
@@ -240,7 +240,7 @@ internal sealed class DevolucionConfig : IEntityTypeConfiguration<Devolucion>
         b.ToTable("Devoluciones", t => t.HasCheckConstraint("CK_Devolucion_Monto", "CAST(\"MontoReembolso\" AS REAL) > 0"));
         b.HasKey(x => x.Id);
         b.HasOne<Pedido>().WithMany().HasForeignKey(x => x.PedidoId).OnDelete(DeleteBehavior.Restrict);
-        b.HasIndex(x => x.PedidoId).IsUnique();               // devolución única por pedido
+        b.HasIndex(x => x.PedidoId).IsUnique();               //devolucion unica por pedido
         b.Property(x => x.Motivo).HasConversion<string>().HasMaxLength(20);
         b.Property(x => x.MontoReembolso).HasPrecision(12, 2);
         b.Property(x => x.ReferenciaReembolso).HasMaxLength(60).IsRequired();
@@ -291,6 +291,6 @@ internal sealed class NotificacionConfig : IEntityTypeConfiguration<Notificacion
         b.Property(x => x.Destino).HasMaxLength(120);
         b.Property(x => x.Asunto).HasMaxLength(200);
         b.Property(x => x.Mensaje).HasMaxLength(1000);
-        b.HasIndex(x => new { x.EventoId, x.Canal }).IsUnique();   // sin avisos duplicados por evento
+        b.HasIndex(x => new { x.EventoId, x.Canal }).IsUnique();   //sin avisos duplicados por evento
     }
 }

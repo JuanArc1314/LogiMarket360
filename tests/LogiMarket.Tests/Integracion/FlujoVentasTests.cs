@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LogiMarket.Tests.Integracion;
 
-/// Funcionalidad y reglas P01–P10 sobre SQLite real (base aislada y recién preparada).
+//funcionalidad y reglas P01-P10 sobre SQLite real (base aislada y recien preparada)
 public class FlujoVentasTests
 {
     [Fact(DisplayName = "P01 Migraciones + seed desde archivo inexistente; relanzar seed no duplica")]
@@ -25,8 +25,8 @@ public class FlujoVentasTests
             var db = sp.GetRequiredService<LogiMarketDbContext>();
             Assert.Empty(await db.Database.GetPendingMigrationsAsync());
         });
-        await e.EnAmbitoAsync(sp => sp.GetRequiredService<SemillaDatos>().EjecutarAsync()); // segunda vez
-        await e.EnAmbitoAsync(sp => sp.GetRequiredService<SemillaDatos>().EjecutarAsync()); // tercera vez
+        await e.EnAmbitoAsync(sp => sp.GetRequiredService<SemillaDatos>().EjecutarAsync()); //segunda vez
+        await e.EnAmbitoAsync(sp => sp.GetRequiredService<SemillaDatos>().EjecutarAsync()); //tercera vez
 
         Assert.Equal(5, await e.ContarAsync(db => db.Productos.Count()));
         Assert.Equal(2, await e.ContarAsync(db => db.Kits.Count()));
@@ -115,7 +115,7 @@ public class FlujoVentasTests
         Assert.Equal(0, await e.ContarAsync(db => db.EventosOutbox.Count()));
         Assert.Equal(0, await e.ContarAsync(db => db.MovimientosInventario.Count(m => m.Tipo == Domain.Operaciones.TipoMovimiento.VENTA)));
 
-        // Al corregir la causa, la misma operación se completa.
+        //al corregir la causa, la misma operacion se completa
         e.Servicio<ConfiguracionDemostracion>().ConfigurarRechazoCobro(false);
         Assert.True((await e.ConfirmarAsync(pedido.Id, "CLAVE-P06")).Exito);
     }
@@ -138,7 +138,7 @@ public class FlujoVentasTests
         Assert.Equal(1, await e.ContarAsync(db => db.EventosOutbox.Count()));
         Assert.Equal(7, await e.StockAsync("P01"));
 
-        // Otra clave sobre un pedido ya pagado tampoco cobra de nuevo.
+        //otra clave sobre un pedido ya pagado tampoco cobra de nuevo
         var otraClave = await e.ConfirmarAsync(pedido.Id, "OTRA-CLAVE");
         Assert.False(otraClave.Exito);
         Assert.Equal(1, await e.ContarAsync(db => db.Pagos.Count()));
@@ -159,7 +159,7 @@ public class FlujoVentasTests
             e.EnAmbitoAsync(sp => sp.GetRequiredService<ServicioPedidos>().CambiarCantidadAsync(pedido.Id, "KIT_TELETRABAJO", 3)));
         Assert.Equal("PEDIDO_NO_EDITABLE", modificar.Codigo);
 
-        // Cambiar el precio del catálogo no altera el pedido pagado (instantánea).
+        //cambiar el precio del catalogo no altera el pedido pagado (instantanea)
         e.IniciarSesion(RolUsuario.ADMIN);
         await e.EnAmbitoAsync(sp => sp.GetRequiredService<Application.Catalogo.ServicioCatalogo>()
             .ActualizarProductoAsync(new("P01", "Mouse USB", "Periféricos", "", 99.00m, 0.20m, 0)));
@@ -195,7 +195,7 @@ public class FlujoVentasTests
         Assert.Equal(EstadoPedido.ENTREGADO, d.Estado);
         Assert.Equal(e.Reloj.Ahora.Date.AddDays(1), d.Despacho!.FechaEstimada);
 
-        e.IniciarSesion(RolUsuario.VENTAS); // VENTAS no despacha
+        e.IniciarSesion(RolUsuario.VENTAS); //VENTAS no despacha
         var otro = await e.CrearPedidoAsync("Carmen", TipoEntrega.ESTANDAR, ("P05", 1));
         await e.ConfirmarAsync(otro.Id);
         await Assert.ThrowsAsync<AccesoDenegadoException>(() => e.EnAmbitoAsync(sp => logistica(sp).DespacharAsync(otro.Id)));
@@ -214,7 +214,7 @@ public class FlujoVentasTests
             pedidoId = pedido.Id;
             referencia = r.ReferenciaPago;
             await e1.EnAmbitoAsync(sp => sp.GetRequiredService<Application.Eventos.ProcesadorOutbox>().ProcesarPendientesAsync());
-            await e1.Proveedor.DisposeAsync(); // "cerrar" la aplicación sin borrar el archivo
+            await e1.Proveedor.DisposeAsync(); //"cerrar" la aplicacion sin borrar el archivo
             Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
             Directory.CreateDirectory(directorio + "-copia");
             foreach (var f in Directory.GetFiles(directorio)) File.Copy(f, Path.Combine(directorio + "-copia", Path.GetFileName(f)));
@@ -226,6 +226,6 @@ public class FlujoVentasTests
         Assert.Equal(referencia, d.Pago!.Referencia);
         Assert.Equal(7, await e2.StockAsync("P01"));
         Assert.Equal(1, await e2.ContarAsync(db => db.Auditorias.Count(a => a.Accion == "EVENTO_PedidoPagado")));
-        Assert.Equal(5, await e2.ContarAsync(db => db.Productos.Count())); // seed no duplicó al reabrir
+        Assert.Equal(5, await e2.ContarAsync(db => db.Productos.Count())); //seed no duplico al reabrir
     }
 }

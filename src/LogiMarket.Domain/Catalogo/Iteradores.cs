@@ -7,8 +7,8 @@ public readonly record struct ComponenteFisico(ProductoSimple Producto, int Cant
     public string Sku => Producto.Sku;
 }
 
-/// PATRÓN ITERATOR — Iterador propio. Recorre los componentes físicos de un elemento
-/// sin exponer la colección interna del kit.
+//patron iterator - iterador propio
+//recorre los componentes fisicos de un elemento sin exponer la coleccion interna del kit
 public interface IIteradorComponentes
 {
     bool MoverSiguiente();
@@ -16,7 +16,7 @@ public interface IIteradorComponentes
     void Reiniciar();
 }
 
-/// Iterador trivial de una hoja: devuelve el propio producto una vez.
+//iterador trivial de una hoja: devuelve el propio producto una vez
 internal sealed class IteradorProductoSimple : IIteradorComponentes
 {
     private readonly ProductoSimple _producto;
@@ -45,8 +45,10 @@ internal sealed class IteradorProductoSimple : IIteradorComponentes
     public void Reiniciar() { _entregado = false; _posicionado = false; }
 }
 
-/// Iterador de kits anidados con pila explícita (recorrido en profundidad, determinista por orden de inserción).
-/// Propaga cantidades multiplicando por la cantidad de cada nivel y termina siempre: la profundidad está acotada.
+//iterador de kits anidados con pila explicita (recorrido en profundidad
+//determinista por orden de insercion)
+//propaga cantidades multiplicando por la cantidad de cada nivel y termina siempre: la
+//profundidad esta acotada
 internal sealed class IteradorComponentesKit : IIteradorComponentes
 {
     private sealed class Marco
@@ -111,7 +113,7 @@ internal sealed class IteradorComponentesKit : IIteradorComponentes
     }
 }
 
-/// Utilidad de expansión: usa el iterador y agrega cantidades por SKU final (orden de aparición).
+//utilidad de expansion: usa el iterador y agrega cantidades por SKU final (orden de aparicion)
 public static class ExpansionCatalogo
 {
     public static IReadOnlyList<ComponenteFisico> ExpandirAgregado(IElementoCatalogo elemento, int cantidad = 1)

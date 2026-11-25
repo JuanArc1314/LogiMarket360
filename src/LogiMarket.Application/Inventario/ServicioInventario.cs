@@ -6,8 +6,8 @@ using LogiMarket.Domain.Pedidos;
 
 namespace LogiMarket.Application.Inventario;
 
-/// Única regla de movimiento de existencias por venta/devolución (DRY entre confirmación y devolución).
-/// Cada cambio de stock deja un MovimientoInventario con signo, motivo y referencia.
+//unica regla de movimiento de existencias por venta/devolucion (DRY entre confirmacion y devolucion)
+//cada cambio de stock deja un MovimientoInventario con signo, motivo y referencia
 public sealed class ServicioInventario
 {
     private readonly IRepositorioMovimientos _movimientos;

@@ -3,7 +3,8 @@ using LogiMarket.Application.Seguridad;
 
 namespace LogiMarket.Infrastructure.Seguridad;
 
-/// Hash de contraseñas con PBKDF2-SHA256 + sal aleatoria. Nunca se guarda texto claro.
+//hash de contraseñas con PBKDF2-SHA256 + sal aleatoria
+//nunca se guarda texto claro
 internal sealed class HasherPbkdf2 : IHasherContrasenas
 {
     private const string Prefijo = "PBKDF2-SHA256";
