@@ -62,7 +62,7 @@ dotnet restore src/LogiMarket.WinForms/LogiMarket.WinForms.csproj
 dotnet restore tests/LogiMarket.Tests/LogiMarket.Tests.csproj
 
 dotnet build src/LogiMarket.WinForms/LogiMarket.WinForms.csproj -c Release
-dotnet test  tests/LogiMarket.Tests/LogiMarket.Tests.csproj          # 52 pruebas automatizadas
+dotnet test  tests/LogiMarket.Tests/LogiMarket.Tests.csproj          # 53 pruebas automatizadas
 
 dotnet run --project src/LogiMarket.WinForms/LogiMarket.WinForms.csproj
 ```
@@ -163,7 +163,7 @@ y restablecer datos).
 
 ## 10. Pruebas automatizadas
 
-52 pruebas xUnit nombradas según la matriz de aceptación (`P01_…` a `P38_…`) más regresiones (`R01_…` a `R03_…`):
+53 pruebas xUnit nombradas según la matriz de aceptación (`P01_…` a `P38_…`) más regresiones (`R01_…` a `R04_…`):
 
 | Archivo | Cobertura |
 |---|---|
@@ -174,6 +174,7 @@ y restablecer datos).
 | `Integracion/PatronesIntegradosTests.cs` | Factory Method, Singleton, Adapter, Bridge, Decorator, Facade, Flyweight, Proxy |
 | `Integracion/ComportamentalesTests.cs` | Chain, Command, Interpreter, Mediator, Observer, Template Method |
 | `Integracion/IntegridadArquitecturaTests.cs` | devolución única, concurrencia, Outbox, LSP/ISP/DIP, dependencias |
+| `Integracion/CompensacionTests.cs` | R04: un error imprevisto tras un cobro aprobado anula el cobro |
 
 ## 11. Generar el ZIP de entrega
 
